@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stack-Varianten</title>
+<style>
+  @font-face { font-family: 'JetBrains Mono'; src: url('../public/fonts/JetBrainsMono-Regular.woff2') format('woff2'); font-weight: 400; }
+  @font-face { font-family: 'JetBrains Mono'; src: url('../public/fonts/JetBrainsMono-Medium.woff2') format('woff2'); font-weight: 500; }
+  @font-face { font-family: 'JetBrains Mono'; src: url('../public/fonts/JetBrainsMono-Bold.woff2') format('woff2'); font-weight: 700; }
+  @font-face { font-family: 'Geist'; src: url('../public/fonts/Geist-Regular.woff2') format('woff2'); font-weight: 400; }
+
+  /* ---------- page chrome: stays neutral so the mocks are judged on their own ---------- */
+  :root {
+    --page: #0f0f11;
+    --page-card: #161618;
+    --page-line: #2a2a2e;
+    --page-text: #e4e4e7;
+    --page-muted: #9a9aa2;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --page: #ececee; --page-card: #f4f4f6; --page-line: #d2d2d7;
+      --page-text: #1d1d20; --page-muted: #55555c;
+    }
+  }
+  :root[data-theme="light"] {
+    --page: #ececee; --page-card: #f4f4f6; --page-line: #d2d2d7;
+    --page-text: #1d1d20; --page-muted: #55555c;
+  }
+
+  /* ---------- site tokens: 1:1 from src/App.css, the mocks run on these ---------- */
+  :root {
+    --bg: #0b0b0d;
+    --bg-bar: #0f0f12;
+    --bg-inset: #131316;
+    --bg-tab-active: #222228;
+    --bg-hover: #16161a;
+    --border: #3a3a43;
+    --border-subtle: #232329;
+    --border-hover: #575761;
+    --border-control: #44444d;
+    --text: #ececef;
+    --text-muted: #a6a6ad;
+    --text-dim: #8e8e96;
+    --text-file: #d6d6da;
+    --text-deco: #4c4c54;
+    --text-hash: #5e5e66;
+    --accent: #a78bfa;
+    --accent-text: #c4b5fd;
+    --accent-selected: rgba(167, 139, 250, 0.14);
+    --accent-focus: rgba(167, 139, 250, 0.55);
+    --on-accent: #0a0a0a;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f1f1f3; --bg-bar: #e8e8eb; --bg-inset: #ebebee; --bg-tab-active: #dadadf; --bg-hover: #e8e8ec;
+      --border: #b4b4bd; --border-subtle: #dcdce1; --border-hover: #8e8e98; --border-control: #a8a8b1;
+      --text: #18181b; --text-muted: #3f3f46; --text-dim: #55555c; --text-file: #27272a;
+      --text-deco: #a8a8b0; --text-hash: #8a8a93;
+      --accent: #7c3aed; --accent-text: #6d28d9;
+      --accent-selected: rgba(124, 58, 237, 0.11); --accent-focus: rgba(124, 58, 237, 0.6);
+      --on-accent: #ffffff;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f1f1f3; --bg-bar: #e8e8eb; --bg-inset: #ebebee; --bg-tab-active: #dadadf; --bg-hover: #e8e8ec;
+    --border: #b4b4bd; --border-subtle: #dcdce1; --border-hover: #8e8e98; --border-control: #a8a8b1;
+    --text: #18181b; --text-muted: #3f3f46; --text-dim: #55555c; --text-file: #27272a;
+    --text-deco: #a8a8b0; --text-hash: #8a8a93;
+    --accent: #7c3aed; --accent-text: #6d28d9;
+    --accent-selected: rgba(124, 58, 237, 0.11); --accent-focus: rgba(124, 58, 237, 0.6);
+    --on-accent: #ffffff;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--page-text);
+    font: 14px/1.6 var(--sans);
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 48px 16px 96px; }
+
+  header.page { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 32px; margin-bottom: 40px; }
+  h1 { margin: 0; font: 700 32px/1.1 var(--mono); letter-spacing: -0.02em; }
+  .lead { margin: 8px 0 0; max-width: 70ch; color: var(--page-muted); }
+  .lead code { font-family: var(--mono); font-size: 13px; }
+  .page-toggle {
+    font: 13px var(--mono); color: var(--page-text); background: none; cursor: pointer;
+    border: 1px solid var(--page-line); border-radius: 6px; padding: 6px 12px;
+  }
+
+  nav.jump { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+  nav.jump a {
+    font: 13px var(--mono); color: var(--page-muted); text-decoration: none;
+    border: 1px solid var(--page-line); border-radius: 999px; padding: 4px 12px;
+  }
+  nav.jump a:hover { color: var(--page-text); }
+
+  section.variant {
+    background: var(--page-card);
+    border: 1px solid var(--page-line);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 32px;
+    scroll-margin-top: 16px;
+  }
+  .variant-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-bottom: 4px; }
+  .variant-head h2 { margin: 0; font: 700 20px var(--mono); }
+  .variant-head .tag { font: 12px var(--mono); color: var(--page-muted); }
+  .variant-desc { margin: 0 0 20px; color: var(--page-muted); max-width: 80ch; }
+  .flow { margin: 14px 0 0; font: 12px/1.7 var(--mono); color: var(--page-muted); }
+  .flow b { color: var(--page-text); font-weight: 500; }
+
+  .states { display: grid; gap: 16px; }
+  .state-label { font: 12px var(--mono); color: var(--page-muted); margin-bottom: 8px; }
+
+  /* ---------- window mock: tmux bar + workspace + statusline ---------- */
+  .mock {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--page-line);
+    border-radius: 10px;
+    overflow: hidden;
+    font: 13px/1.6 var(--mono);
+  }
+  .m-bar, .m-status {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 10px;
+    background: var(--bg-bar);
+    font-size: 12px;
+  }
+  .m-bar { border-bottom: 1px solid var(--border-subtle); }
+  .m-status { border-top: 1px solid var(--border-subtle); justify-content: space-between; gap: 16px; }
+  .m-session { background: var(--text); color: var(--bg); font-weight: 700; padding: 1px 7px; border-radius: 4px; }
+  .m-tab { color: var(--text-dim); padding: 1px 6px; border-radius: 4px; }
+  .m-tab.on { color: var(--text); background: var(--bg-tab-active); }
+  .m-mode { background: var(--text); color: var(--bg); font-weight: 700; padding: 1px 7px; border-radius: 4px; }
+  .m-dim { color: var(--text-dim); }
+
+  .m-body {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 16px;
+    padding: 22px 12px 14px;
+    min-height: 400px;
+    align-items: start;
+  }
+  .m-side { display: grid; gap: 12px; align-content: start; min-width: 0; }
+  .m-pane {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 8px 8px;
+    min-width: 0;
+  }
+  .m-pane.focus { border-color: var(--accent-focus); }
+  .m-title {
+    position: absolute; top: -9px; left: 10px;
+    padding: 0 6px; background: var(--bg);
+    color: var(--text-dim); font-size: 12px; line-height: 16px;
+    max-width: calc(100% - 20px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .m-pane.focus > .m-title { color: var(--text); font-weight: 700; }
+  .m-main { padding: 20px 16px 16px; }
+
+  /* sidebar / list rows (lazygit style, like the real site) */
+  .m-row {
+    display: flex; align-items: center; gap: 6px;
+    min-height: 26px; padding: 0 6px; border-radius: 6px;
+    white-space: nowrap; overflow: hidden;
+  }
+  .m-row .mk { width: 12px; flex: none; color: transparent; font-size: 11px; }
+  .m-row.on { background: var(--accent-selected); }
+  .m-row.on .mk, .m-row.open .mk { color: var(--accent-text); }
+  .m-row.folder .rn { color: var(--text-dim); font-weight: 500; }
+  .m-row .rd { font-size: 11px; color: var(--text-deco); overflow: hidden; text-overflow: ellipsis; }
+  .m-row.on .rd { color: var(--text-dim); }
+
+  /* annotated list rows (overview states) */
+  .ls-group { margin: 16px 0 4px; font-size: 12px; color: var(--text-hash); }
+  .ls-group:first-child { margin-top: 0; }
+  .ls-row {
+    display: grid; grid-template-columns: 11ch minmax(0, 1fr) auto;
+    gap: 16px; align-items: baseline;
+    padding: 3px 8px; border-radius: 6px;
+  }
+  .ls-row.on { background: var(--accent-selected); }
+  .ls-name { font-weight: 700; color: var(--text-file); white-space: nowrap; }
+  .ls-desc { font: 13px var(--sans); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ls-tags { font-size: 11px; color: var(--text-deco); white-space: nowrap; }
+
+  .term { margin: 0 0 8px; font-family: var(--mono); font-size: 13px; color: var(--text-file); white-space: pre; overflow-x: auto; }
+  .prompt { color: var(--accent-text); font-weight: 700; }
+
+  /* ---------- detail placeholder: the part mirac builds himself ---------- */
+  .d-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; min-height: 22px; }
+  .d-crumb { font-size: 12px; color: var(--text-dim); }
+  .back-btn { font-size: 12px; color: var(--text); border: 1px solid var(--border-control); border-radius: 6px; padding: 1px 8px; }
+  .d-name { margin: 0 0 12px; font-size: 20px; font-weight: 700; }
+  .d-fill {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    min-height: 210px; padding: 20px;
+    border: 1px dashed var(--border-hover); border-radius: 10px;
+    background: var(--bg-inset);
+    color: var(--text-dim); font-size: 12px;
+  }
+  .d-fill.small { min-height: 130px; }
+  .d-fill-label { font-weight: 700; color: var(--text-muted); font-size: 13px; }
+  .d-fill-hint { color: var(--text-hash); font-size: 11px; margin-bottom: 10px; }
+  .sk { height: 8px; border-radius: 4px; background: var(--bg-tab-active); }
+  .d-back { margin-top: 10px; font-size: 11px; color: var(--text-hash); }
+
+  /* V3 master–detail split inside the main pane */
+  .split { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .split-list { border: 1px solid var(--border-subtle); border-radius: 10px; padding: 8px 6px; }
+
+  /* V5 fold-open detail inside the list */
+  .fold-body { margin: 2px 8px 12px 30px; }
+
+  /* V6 neovim-style help window above the list */
+  .helpwin { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+  .helpwin-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 10px;
+    background: var(--bg-inset);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 12px; color: var(--text-dim);
+  }
+  .helpwin-bar .q { color: var(--accent-text); }
+  .helpwin-body { padding: 12px; }
+
+  @media (max-width: 760px) {
+    .m-body { grid-template-columns: 1fr; min-height: 0; }
+    .m-side { display: none; }
+    .split { grid-template-columns: 1fr; }
+    .m-status .hints { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page">
+    <div>
+      <h1>Stack-Varianten</h1>
+      <p class="lead">Jeder Stack-Eintrag (go, java, …) bekommt eine eigene Detailansicht – deren Inhalt baust du selbst. Hier geht es nur um den <strong>Weg rein und raus</strong>: jede Variante zeigt Zustand <em>a</em> (Übersicht / Navigation) und Zustand <em>b</em> (geöffnete Detailansicht als Platzhalter-Box) mit dem jeweiligen Zurück-Mechanismus. Echte Design-Tokens aus <code>App.css</code>, Button oben rechts schaltet dunkel/hell.</p>
+    </div>
+    <button class="page-toggle" type="button" id="pageToggle">Seite: hell / dunkel</button>
+  </header>
+  <nav class="jump" id="jump" aria-label="Varianten"></nav>
+  <main id="variants"></main>
+</div>
+
+<script>
+/* ---------- content: 1:1 the current placeholders from src/content.ts ---------- */
+const PROJECTS = ['ventorygo', 'mysh', 'vlanscape', 'kairo'];
+const GROUPS = [
+  { folder: 'sprachen', desc: 'Programmiersprachen, mit denen ich täglich arbeite.', files: ['go', 'java', 'kotlin', 'c++'] },
+  { folder: 'backend', desc: 'Server, Datenbanken und Anmeldung.', files: ['gin', 'spring boot', 'postgresql', 'keycloak'] },
+  { folder: 'infra', desc: 'Bauen, testen und ausliefern.', files: ['docker', 'ci/cd'] },
+  { folder: 'tools', desc: 'Mein Terminal-Alltag.', files: ['neovim', 'tmux', 'ghostty', 'yazi'] },
+];
+const INFO = {
+  go: 'Meine Hauptsprache im Backend. Ganzzahlige Cents, klare Nebenläufigkeit, schnelle Builds.',
+  java: 'Aus dem Studium und für Spring-Boot-Dienste.',
+  kotlin: 'Moderne JVM-Sprache, wenn Java zu ausführlich wird.',
+  'c++': 'Systemnah: Pipes, Prozesse und Speicher selbst verwalten.',
+  gin: 'Schlanker HTTP-Router für Go, ohne viel Magie.',
+  'spring boot': 'Für größere Java-Dienste mit DI, REST und Sicherheit.',
+  postgresql: 'Relationale Datenbank mit Transaktionen und sauberem SQL.',
+  keycloak: 'Identity-Provider für Login, Rollen und SSO.',
+  docker: 'Container für reproduzierbare Builds und Läufe.',
+  'ci/cd': 'GitHub Actions: Build, Tests und Deploy automatisch.',
+  neovim: 'Mein Editor: LSP, Suche und alles über Tastenkürzel.',
+  tmux: 'Sitzungen und Fenster, die einen SSH-Abbruch überleben.',
+  ghostty: 'Schnelles Terminal mit GPU-Rendering.',
+  yazi: 'Dateimanager für schnelles Navigieren im Terminal.',
+};
+const USED = {
+  go: ['ventorygo', 'kairo'],
+  'c++': ['mysh'],
+  gin: ['ventorygo'],
+  postgresql: ['ventorygo'],
+  docker: ['ventorygo'],
+};
+const tags = (file) => (USED[file] ? '# ' + USED[file].join(', ') : '');
+const folderOf = (file) => GROUPS.find((g) => g.files.includes(file)).folder;
+
+/* ---------- window frame ---------- */
+function win(side, main, title, hint, tabs) {
+  const tabRow = tabs || `<span class="m-tab">1:profil</span><span class="m-tab">2:projekte</span><span class="m-tab on">3:stack</span><span class="m-tab">4:readme</span>`;
+  return `
+  <div class="mock">
+    <div class="m-bar"><span class="m-session">mirac</span>${tabRow}</div>
+    <div class="m-body">
+      <div class="m-side">
+        <div class="m-pane focus"><span class="m-title">stack</span>${side}</div>
+      </div>
+      <div class="m-pane m-main"><span class="m-title">${title}</span>${main}</div>
+    </div>
+    <div class="m-status">
+      <span><span class="m-mode">NORMAL</span> <span class="m-dim">main</span></span>
+      <span class="m-dim hints">${hint}</span>
+      <span class="m-dim"><span class="m-themelabel"></span> utf-8 · de · © 2026 Mirac Sancak</span>
+    </div>
+  </div>`;
+}
+
+/* ---------- sidebar builders ---------- */
+function row(kind, name, detail, on, mk) {
+  return `<div class="m-row ${kind}${on ? ' on' : ''}"><span class="mk">${mk || '▸'}</span><span class="rn">${name}</span>${detail ? `<span class="rd">${detail}</span>` : ''}</div>`;
+}
+function sideTree(cursor) {
+  return GROUPS.map((g) =>
+    row('folder', g.folder + '/') +
+    g.files.map((f) => row('file', f, tags(f), f === cursor)).join('')
+  ).join('');
+}
+function sideGroups(cursorFolder) {
+  return GROUPS.map((g) =>
+    row('folder', g.folder + '/', `${g.files.length}`, g.folder === cursorFolder)
+  ).join('');
+}
+
+/* ---------- main-pane list builders ---------- */
+function lsAll(cursor) {
+  return GROUPS.map((g) =>
+    `<div class="ls-group"># ${g.folder}/ — ${g.desc}</div>` +
+    g.files.map((f) =>
+      `<div class="ls-row${f === cursor ? ' on' : ''}"><span class="ls-name">${f}</span><span class="ls-desc">${INFO[f]}</span><span class="ls-tags">${tags(f) || '↵'}</span></div>`
+    ).join('')
+  ).join('');
+}
+
+/* ---------- detail placeholder: content slot for mirac ---------- */
+function detailPH(name, head, back, small) {
+  return `
+    ${head ? `<div class="d-head">${head}</div>` : ''}
+    <h3 class="d-name">${name}</h3>
+    <div class="d-fill${small ? ' small' : ''}">
+      <span class="d-fill-label">deine detail-ansicht</span>
+      <span class="d-fill-hint">platzhalter – den inhalt gestaltest du selbst</span>
+      <i class="sk" style="width:72%"></i><i class="sk" style="width:56%"></i><i class="sk" style="width:64%"></i>
+    </div>
+    ${back ? `<div class="d-back">${back}</div>` : ''}`;
+}
+
+/* ---------- variants: each = [state a, state b] ---------- */
+const VARIANTS = [
+  {
+    id: 'v1', name: 'V1 · Sidebar-Tree → Detail', tag: 'baseline, wie heute',
+    desc: 'Der Status quo als Vergleichsbasis: die Liste lebt als Tree in der Sidebar, das Haupt-Pane zeigt immer den Cursor-Eintrag. Es gibt kein „Öffnen" – j/k in der Sidebar wechselt die Detailansicht sofort.',
+    flow: '<b>flow:</b> j/k wählen in der sidebar → detail wechselt sofort · kein öffnen/schliessen, kein zurück nötig',
+    states: () => [
+      ['a · tree + detail von go', win(sideTree('go'), detailPH('go'), '~/stack/sprachen/go', 'j/k ↑↓ navigieren · t theme')],
+      ['b · cursor weiter → detail von java', win(sideTree('java'), detailPH('java'), '~/stack/sprachen/java', 'j/k ↑↓ navigieren · t theme')],
+    ],
+  },
+  {
+    id: 'v2', name: 'V2 · Drill-down mit Breadcrumb', tag: 'übersicht im haupt-pane',
+    desc: 'Das Haupt-Pane zeigt zuerst die komplette annotierte Liste aller Techs. Enter öffnet die Detailansicht desselben Panes – mit Breadcrumb und Zurück-Button oben. Die Sidebar schrumpft zur Gruppen-Navigation, weil die volle Liste ja im Haupt-Pane steht.',
+    flow: '<b>flow:</b> enter öffnet detail · esc oder [ ← stack ] zurück zur liste · breadcrumb zeigt pfad',
+    states: () => [
+      ['a · übersicht: alle techs', win(sideGroups('sprachen'), lsAll('go'), '~/stack', 'enter öffnet · j/k ↑↓ navigieren')],
+      ['b · detail offen', win(sideGroups('sprachen'),
+        detailPH('go',
+          `<span class="d-crumb">~/stack ▸ sprachen ▸ go</span><span class="back-btn">[ ← stack ]</span>`,
+          'esc oder [ ← stack ] zurück zur übersicht'),
+        '~/stack/sprachen/go', 'esc zurück · j/k ↑↓ navigieren')],
+    ],
+  },
+  {
+    id: 'v3', name: 'V3 · Master–Detail-Split', tag: 'liste + detail nebeneinander',
+    desc: 'Liste und Detail leben beide im Haupt-Pane nebeneinander, wie Commit-Liste + Diff in lazygit. Der Cursor in der linken Spalte steuert live die rechte – nichts wird geöffnet oder geschlossen, beide bleiben immer sichtbar.',
+    flow: '<b>flow:</b> j/k in der linken spalte → rechte spalte wechselt sofort · beide bleiben sichtbar · sidebar nur gruppen-nav',
+    states: () => [
+      ['a · split, cursor go', win(sideGroups('sprachen'),
+        `<div class="split"><div class="split-list">${sideTree('go')}</div><div>${detailPH('go')}</div></div>`,
+        '~/stack', 'j/k ↑↓ navigieren · beide spalten live')],
+      ['b · cursor weiter → postgresql', win(sideGroups('backend'),
+        `<div class="split"><div class="split-list">${sideTree('postgresql')}</div><div>${detailPH('postgresql')}</div></div>`,
+        '~/stack', 'j/k ↑↓ navigieren · beide spalten live')],
+    ],
+  },
+  {
+    id: 'v4', name: 'V4 · Verzeichnis-Metapher (cd / ls)', tag: 'stack als dateisystem',
+    desc: 'Der Stack benimmt sich wie ein Dateisystem: Sidebar = Verzeichnisse, Haupt-Pane = `ls`-Listing des gewählten Verzeichnisses. Enter auf einem Eintrag ist `cd` hinein: die Detailansicht ist eine eigene „Seite" mit Pfad im tmux-Tab und `cd ..` zurück.',
+    flow: '<b>flow:</b> enter = cd rein · esc / [ cd .. ] = zurück · tab-label zeigt aktuellen pfad (3:stack/go)',
+    states: () => [
+      ['a · ls ~/stack/sprachen', win(sideGroups('sprachen'),
+        `<pre class="term"><span class="prompt">$ </span>ls ~/stack/sprachen</pre>` +
+        GROUPS[0].files.map((f) =>
+          `<div class="ls-row${f === 'go' ? ' on' : ''}"><span class="ls-name">${f}</span><span class="ls-desc">${INFO[f]}</span><span class="ls-tags">↵</span></div>`
+        ).join(''),
+        '~/stack/sprachen', 'enter = cd · j/k ↑↓ navigieren')],
+      ['b · cd go → detail-seite', win(sideGroups('sprachen'),
+        detailPH('go',
+          `<span class="d-crumb"><span class="prompt">$ </span>cd go &nbsp;·&nbsp; ~/stack/sprachen/go</span><span class="back-btn">[ cd .. ]</span>`,
+          'esc oder [ cd .. ] zurück ins listing'),
+        '~/stack/sprachen/go', 'esc = cd .. · j/k ↑↓ navigieren',
+        '<span class="m-tab">1:profil</span><span class="m-tab">2:projekte</span><span class="m-tab on">3:stack/go</span><span class="m-tab">4:readme</span>')],
+    ],
+  },
+  {
+    id: 'v5', name: 'V5 · Aufklappen in der Liste', tag: 'detail inline, kontext bleibt',
+    desc: 'Die Detailansicht klappt direkt unter dem Eintrag in der Liste auf – die Liste bleibt drumherum sichtbar, der Kontext geht nie verloren. Mehrere Einträge könnten gleichzeitig offen sein; der Tree-Charakter der Seite bleibt erhalten.',
+    flow: '<b>flow:</b> enter klappt auf / zu · liste bleibt drumherum sichtbar · kein separater zurück-weg nötig',
+    states: () => [
+      ['a · liste, alles zu', win(sideGroups('sprachen'), lsAll('go'), '~/stack', 'enter klappt auf · j/k ↑↓ navigieren')],
+      ['b · go aufgeklappt', win(sideGroups('sprachen'),
+        `<div class="ls-group"># sprachen/ — ${GROUPS[0].desc}</div>` +
+        `<div class="ls-row on"><span class="ls-name">go</span><span class="ls-desc">${INFO.go}</span><span class="ls-tags"># ventorygo, kairo</span></div>` +
+        `<div class="fold-body">${detailPH('go', '', 'enter klappt wieder zu · liste bleibt sichtbar', true)}</div>` +
+        GROUPS[0].files.slice(1).map((f) =>
+          `<div class="ls-row"><span class="ls-name">${f}</span><span class="ls-desc">${INFO[f]}</span><span class="ls-tags">${tags(f) || '↵'}</span></div>`
+        ).join('') +
+        GROUPS.slice(1).map((g) =>
+          `<div class="ls-group"># ${g.folder}/ — ${g.desc}</div>` +
+          g.files.map((f) =>
+            `<div class="ls-row"><span class="ls-name">${f}</span><span class="ls-desc">${INFO[f]}</span><span class="ls-tags">${tags(f) || '↵'}</span></div>`
+          ).join('')
+        ).join(''),
+        '~/stack', 'enter klappt zu · j/k ↑↓ navigieren')],
+    ],
+  },
+  {
+    id: 'v6', name: 'V6 · Help-Fenster über der Liste', tag: 'neovim-:help-gefühl',
+    desc: 'Wie `:help` in Neovim: Enter öffnet die Detailansicht als eigenes Fenster oberhalb der Liste, mit eigener Titelzeile und `q` zum Schließen. Die Liste bleibt darunter sichtbar und behält den Cursor – öffnen fühlt sich an wie ein Split, nicht wie ein Seitenwechsel.',
+    flow: '<b>flow:</b> enter öffnet help-fenster · q / esc schliesst · liste + cursor bleiben darunter sichtbar',
+    states: () => [
+      ['a · liste, kein fenster', win(sideGroups('sprachen'), lsAll('go'), '~/stack', 'enter öffnet help · j/k ↑↓ navigieren')],
+      ['b · help-fenster offen', win(sideGroups('sprachen'),
+        `<div class="helpwin">
+           <div class="helpwin-bar"><span>help: go — ~/stack/sprachen/go</span><span class="q">[ q ]</span></div>
+           <div class="helpwin-body">${detailPH('go', '', '', true)}</div>
+         </div>` + lsAll('go'),
+        '~/stack', 'q / esc schliesst · j/k ↑↓ navigieren')],
+    ],
+  },
+];
+
+document.getElementById('jump').innerHTML = VARIANTS.map((v) => `<a href="#${v.id}">${v.id.toUpperCase()} · ${v.tag}</a>`).join('');
+document.getElementById('variants').innerHTML = VARIANTS.map((v) => `
+  <section class="variant" id="${v.id}">
+    <div class="variant-head"><h2>${v.name}</h2><span class="tag">${v.tag}</span></div>
+    <p class="variant-desc">${v.desc}</p>
+    <div class="states">
+      ${v.states().map(([label, html]) => `<div><div class="state-label">${label}</div>${html}</div>`).join('')}
+    </div>
+    <p class="flow">${v.flow}</p>
+  </section>`).join('');
+
+/* ---------- theme toggle for page + all mocks ---------- */
+const root = document.documentElement;
+const effectiveDark = () => (root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
+function syncThemeLabels() {
+  document.querySelectorAll('.m-themelabel').forEach((el) => {
+    el.textContent = '[ ' + (effectiveDark() ? 'light' : 'dark') + ' ]';
+  });
+}
+document.getElementById('pageToggle').addEventListener('click', () => {
+  root.dataset.theme = effectiveDark() ? 'light' : 'dark';
+  syncThemeLabels();
+});
+syncThemeLabels();
+</script>
+</body>
+</html>

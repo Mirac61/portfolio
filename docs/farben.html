@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Farbvarianten</title>
+<style>
+  @font-face { font-family: 'JetBrains Mono'; src: url('../public/fonts/JetBrainsMono-Regular.woff2') format('woff2'); font-weight: 400; }
+  @font-face { font-family: 'JetBrains Mono'; src: url('../public/fonts/JetBrainsMono-Bold.woff2') format('woff2'); font-weight: 700; }
+  @font-face { font-family: 'Geist'; src: url('../public/fonts/Geist-Regular.woff2') format('woff2'); font-weight: 400; }
+
+  /* the page itself stays neutral so the variants are judged on their own */
+  :root {
+    --page: #0f0f11;
+    --page-card: #161618;
+    --page-line: #2a2a2e;
+    --page-text: #e4e4e7;
+    --page-muted: #9a9aa2;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --page: #ececee;
+      --page-card: #f4f4f6;
+      --page-line: #d2d2d7;
+      --page-text: #1d1d20;
+      --page-muted: #55555c;
+    }
+  }
+  :root[data-theme="light"] {
+    --page: #ececee;
+    --page-card: #f4f4f6;
+    --page-line: #d2d2d7;
+    --page-text: #1d1d20;
+    --page-muted: #55555c;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--page-text);
+    font: 14px/1.6 var(--sans);
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 48px 16px 96px; }
+
+  header.page { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 32px; margin-bottom: 40px; }
+  h1 { margin: 0; font: 700 32px/1.1 var(--mono); letter-spacing: -0.02em; }
+  .lead { margin: 8px 0 0; max-width: 62ch; color: var(--page-muted); }
+  .page-toggle {
+    font: 13px var(--mono); color: var(--page-text); background: none; cursor: pointer;
+    border: 1px solid var(--page-line); border-radius: 6px; padding: 6px 12px;
+  }
+
+  nav.jump { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+  nav.jump a {
+    font: 13px var(--mono); color: var(--page-muted); text-decoration: none;
+    border: 1px solid var(--page-line); border-radius: 999px; padding: 4px 12px;
+  }
+  nav.jump a:hover { color: var(--page-text); }
+
+  section.variant {
+    background: var(--page-card);
+    border: 1px solid var(--page-line);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 32px;
+    scroll-margin-top: 16px;
+  }
+  .variant-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-bottom: 4px; }
+  .variant-head h2 { margin: 0; font: 700 20px var(--mono); }
+  .variant-head .tag { font: 12px var(--mono); color: var(--page-muted); }
+  .variant-desc { margin: 0 0 20px; color: var(--page-muted); max-width: 70ch; }
+
+  .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap: 20px; }
+  .mode-label { font: 12px var(--mono); color: var(--page-muted); margin-bottom: 8px; }
+
+  /* ---------- mock of the portfolio, driven by the variant's tokens ---------- */
+  .mock {
+    --selected: color-mix(in srgb, var(--accent) 14%, transparent);
+    --focus-line: color-mix(in srgb, var(--accent) 70%, var(--border));
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--page-line);
+    border-radius: 10px;
+    overflow: hidden;
+    font: 12px/1.6 var(--mono);
+  }
+  .m-bar, .m-status {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 10px;
+    background: var(--bar);
+  }
+  .m-bar { border-bottom: 1px solid var(--border); }
+  .m-status { border-top: 1px solid var(--border); justify-content: space-between; }
+  .m-session { background: var(--text); color: var(--bg); font-weight: 700; padding: 1px 7px; border-radius: 4px; }
+  .m-tab { color: var(--muted); padding: 1px 6px; border-radius: 4px; }
+  .m-tab.on { color: var(--text); background: var(--raised); }
+  .m-mode { background: var(--text); color: var(--bg); font-weight: 700; padding: 1px 7px; border-radius: 4px; }
+  .m-dim { color: var(--dim); }
+
+  .m-body { display: grid; grid-template-columns: 150px 1fr; gap: 10px; padding: 12px 10px; }
+  .m-pane {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 8px 8px;
+    min-width: 0;
+  }
+  .m-pane.focus { border-color: var(--focus-line); }
+  .m-pane > .m-title {
+    position: absolute; top: -9px; left: 10px;
+    padding: 0 5px; background: var(--bg);
+    color: var(--muted); line-height: 16px;
+  }
+  .m-pane.focus > .m-title { color: var(--text); font-weight: 700; }
+  .m-side { display: grid; gap: 10px; align-content: start; }
+  .m-row { display: flex; gap: 6px; padding: 1px 6px; border-radius: 5px; white-space: nowrap; overflow: hidden; }
+  .m-row .mk { width: 8px; color: transparent; }
+  .m-row.on { background: var(--selected); }
+  .m-row.on .mk { color: var(--accent-text); }
+  .m-row .d { color: var(--dim); }
+
+  .m-main { padding: 18px 14px 14px; }
+  .m-banner {
+    font: 700 26px/1 var(--mono); letter-spacing: 0.04em;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 45%, var(--text)), var(--accent));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 10px;
+  }
+  .m-h { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+  .m-cursor { display: inline-block; width: 7px; height: 13px; background: var(--accent); vertical-align: -2px; margin-left: 3px; }
+  .m-p { font-family: var(--sans); color: var(--muted); margin: 0 0 10px; font-size: 12px; }
+  .m-kv { display: grid; grid-template-columns: 10ch 1fr; column-gap: 8px; margin-bottom: 12px; }
+  .m-kv dt { color: var(--dim); }
+  .m-kv dd { margin: 0; }
+  .m-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .m-btn { padding: 3px 10px; border-radius: 5px; font-weight: 700; }
+  .m-btn.solid { background: var(--accent); color: var(--on-accent); }
+  .m-btn.ghost { border: 1px solid var(--border); color: var(--text); }
+  .m-link { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--accent-text) 50%, transparent); }
+
+  /* ---------- swatches ---------- */
+  .swatches { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .sw {
+    display: flex; align-items: center; gap: 6px;
+    font: 11px var(--mono); color: var(--page-muted);
+    background: none; border: 1px solid var(--page-line); border-radius: 6px;
+    padding: 3px 8px 3px 4px; cursor: pointer;
+  }
+  .sw:hover { color: var(--page-text); }
+  .sw i { width: 14px; height: 14px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgb(128 128 128 / 0.35); }
+  .checks { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; font: 11px var(--mono); color: var(--page-muted); }
+  .checks b { font-weight: 400; color: var(--page-text); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+    background: var(--page-text); color: var(--page); font: 12px var(--mono);
+    padding: 6px 12px; border-radius: 6px; opacity: 0; transition: opacity 0.2s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 520px) {
+    .m-body { grid-template-columns: 1fr; }
+    .m-hide-sm { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page">
+    <div>
+      <h1>Farbvarianten</h1>
+      <p class="lead">Sechs Paletten für das Portfolio, jeweils Dunkel und Hell. Lila ist überall nur Akzent: Logo, Cursor, Button, Markierung, fokussiertes Pane. Ein Klick auf eine Farbe kopiert den Hex-Wert. Unter jeder Palette steht der Kontrast, ab 4,5 ist Text gut lesbar.</p>
+    </div>
+    <button class="page-toggle" type="button" id="pageToggle">Seite: hell / dunkel</button>
+  </header>
+  <nav class="jump" id="jump" aria-label="Varianten"></nav>
+  <main id="variants"></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// Each variant: dark and light tokens. The mock, swatches and contrast checks are built from these.
+const VARIANTS = [
+  {
+    id: 'graphit', name: 'Graphit', tag: 'aktueller Stand',
+    desc: 'Neutrales Anthrazit und neutrales Grau, klassisches Violett. Der Stand, der gerade im Code ist.',
+    dark:  { bg: '#121214', bar: '#161618', raised: '#1c1c1f', border: '#2c2c30', text: '#e2e2e5', muted: '#a3a3a9', dim: '#87878e', accent: '#8b5cf6', accentText: '#b495f9' },
+    light: { bg: '#e7e7e9', bar: '#dedee1', raised: '#d5d5d9', border: '#c3c3c8', text: '#222225', muted: '#444449', dim: '#59595f', accent: '#7c3aed', accentText: '#6527d4' },
+  },
+  {
+    id: 'tinte', name: 'Tinte', tag: 'dunkler, ruhigeres Lila',
+    desc: 'Dunkel fast schwarz, Hell etwas heller. Das Lila ist weniger gesättigt und wirkt dadurch zurückhaltender.',
+    dark:  { bg: '#0e0e10', bar: '#121214', raised: '#18181b', border: '#26262b', text: '#dcdce0', muted: '#9c9ca3', dim: '#818189', accent: '#7c5ce0', accentText: '#a993f0' },
+    light: { bg: '#eeeef0', bar: '#e5e5e8', raised: '#dcdce0', border: '#cbcbd0', text: '#1c1c1f', muted: '#3f3f45', dim: '#56565d', accent: '#6d4ad6', accentText: '#5b38c4' },
+  },
+  {
+    id: 'schiefer', name: 'Schiefer', tag: 'kühl, leicht bläulich',
+    desc: 'Grautöne mit einem Hauch Blau, das Lila geht Richtung Indigo. Wirkt technischer und kühler.',
+    dark:  { bg: '#111317', bar: '#15171c', raised: '#1b1e24', border: '#2a2e36', text: '#e1e4ea', muted: '#a0a6b1', dim: '#848b97', accent: '#8b7cf6', accentText: '#b3a8fa' },
+    light: { bg: '#e6e8ec', bar: '#dcdfe4', raised: '#d3d6dc', border: '#c0c4cc', text: '#1f232a', muted: '#41464f', dim: '#565c66', accent: '#6c5ce7', accentText: '#5546d0' },
+  },
+  {
+    id: 'asche', name: 'Asche', tag: 'warm, papierartig',
+    desc: 'Leicht warme Grautöne, Hell erinnert an Papier. Das Lila ist etwas weicher, damit es zum warmen Grund passt.',
+    dark:  { bg: '#141312', bar: '#191716', raised: '#1f1d1b', border: '#2f2c29', text: '#e6e2dd', muted: '#a8a29b', dim: '#8c867f', accent: '#9a7fe0', accentText: '#bba8f0' },
+    light: { bg: '#ebe8e3', bar: '#e2dfd9', raised: '#d9d5ce', border: '#c7c2ba', text: '#25221f', muted: '#47423d', dim: '#5c5751', accent: '#7451d6', accentText: '#6040c2' },
+  },
+  {
+    id: 'nebel', name: 'Nebel', tag: 'gedämpftes Lila',
+    desc: 'Neutrale Grautöne mit einem grauen, entsättigten Lila. Das Lila fällt am wenigsten auf.',
+    dark:  { bg: '#131316', bar: '#17171b', raised: '#1d1d21', border: '#2d2d33', text: '#e0e0e4', muted: '#a2a2aa', dim: '#86868f', accent: '#9a8ad8', accentText: '#bcb0ea' },
+    light: { bg: '#e9e9ec', bar: '#e0e0e4', raised: '#d7d7dc', border: '#c5c5cc', text: '#222226', muted: '#45454b', dim: '#5a5a61', accent: '#6e5cb8', accentText: '#5e4ca8' },
+  },
+  {
+    id: 'mitternacht', name: 'Mitternacht', tag: 'kontrastreich, Lavendel',
+    desc: 'Das dunkelste Dunkel und das hellste Hell der Auswahl, aber beides nicht rein schwarz oder weiß. Im Dunkeln ein helles Lavendel als Akzent.',
+    dark:  { bg: '#0b0b0d', bar: '#0f0f12', raised: '#151518', border: '#232328', text: '#ececef', muted: '#a6a6ad', dim: '#8a8a92', accent: '#a78bfa', accentText: '#c4b5fd' },
+    light: { bg: '#f1f1f3', bar: '#e8e8eb', raised: '#dfdfe3', border: '#cfcfd5', text: '#18181b', muted: '#3f3f46', dim: '#55555c', accent: '#7c3aed', accentText: '#6d28d9' },
+  },
+];
+
+// WCAG contrast
+function luminance(hex) {
+  const c = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+    .map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+function contrast(a, b) {
+  const [x, y] = [luminance(a), luminance(b)].sort((m, n) => n - m);
+  return (x + 0.05) / (y + 0.05);
+}
+// button label: whichever of near-black and white reads better on the accent
+const onAccent = (accent) => (contrast('#0a0a0a', accent) >= contrast('#ffffff', accent) ? '#0a0a0a' : '#ffffff');
+
+const LABELS = { bg: 'fläche', bar: 'leiste', raised: 'erhöht', border: 'rahmen', text: 'text', muted: 'fließtext', dim: 'label', accent: 'akzent', accentText: 'akzent-text' };
+
+function mock(t, mode) {
+  const vars = Object.entries({ ...t, onAccent: onAccent(t.accent) })
+    .map(([k, v]) => `--${k.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())}:${v}`).join(';');
+  return `
+  <div class="mock" style="${vars}">
+    <div class="m-bar">
+      <span class="m-session">mirac</span>
+      <span class="m-tab">0:profil</span><span class="m-tab on">1:projekte</span>
+      <span class="m-tab m-hide-sm">2:stack</span><span class="m-tab m-hide-sm">3:readme</span>
+    </div>
+    <div class="m-body">
+      <div class="m-side">
+        <div class="m-pane focus"><span class="m-title">projekte</span>
+          <div class="m-row on"><span class="mk">▸</span>ventorygo</div>
+          <div class="m-row"><span class="mk">▸</span>mysh</div>
+          <div class="m-row"><span class="mk">▸</span>vlanscape</div>
+          <div class="m-row"><span class="mk">▸</span>kairo</div>
+        </div>
+        <div class="m-pane m-hide-sm"><span class="m-title">stack</span>
+          <div class="m-row"><span class="mk">▸</span>sprachen/</div>
+          <div class="m-row"><span class="mk">▸</span>backend/</div>
+        </div>
+      </div>
+      <div class="m-pane m-main"><span class="m-title">~/projects/ventorygo</span>
+        <div class="m-banner">MIRAC</div>
+        <div class="m-h">Ich baue Backends mit Go und Java.<span class="m-cursor"></span></div>
+        <p class="m-p">Rechnungen für Freelancer und kleine Firmen. Das Go-Backend rechnet mit ganzzahligen Cents und erzeugt PDFs nach DIN 5008.</p>
+        <dl class="m-kv">
+          <dt>sprache</dt><dd>Go</dd>
+          <dt>datenbank</dt><dd>PostgreSQL</dd>
+          <dt>infra</dt><dd>Docker</dd>
+        </dl>
+        <div class="m-btns">
+          <span class="m-btn solid">[ repo ansehen ]</span>
+          <span class="m-btn ghost">[ mail ]</span>
+        </div>
+        <p class="m-p" style="margin:10px 0 0">- <span class="m-link">github.com/Mirac61</span></p>
+      </div>
+    </div>
+    <div class="m-status">
+      <span><span class="m-mode">NORMAL</span> <span class="m-dim">main</span></span>
+      <span class="m-dim">[ ${mode === 'dark' ? 'light' : 'dark'} ]</span>
+    </div>
+  </div>`;
+}
+
+function swatches(t) {
+  return `<div class="swatches">${Object.entries(LABELS).map(([k, label]) =>
+    `<button class="sw" type="button" data-hex="${t[k]}" title="${label} kopieren"><i style="background:${t[k]}"></i>${label} ${t[k]}</button>`).join('')}</div>`;
+}
+
+function checks(t) {
+  const rows = [
+    ['text', contrast(t.text, t.bg)],
+    ['label', contrast(t.dim, t.bg)],
+    ['label auf erhöht', contrast(t.dim, t.raised)],
+    ['akzent-text', contrast(t.accentText, t.bg)],
+    ['button', contrast(onAccent(t.accent), t.accent)],
+  ];
+  return `<div class="checks">${rows.map(([k, v]) => `<span>${k} <b>${v.toFixed(1)}</b>${v < 4.5 ? ' ⚠' : ''}</span>`).join('')}</div>`;
+}
+
+document.getElementById('jump').innerHTML = VARIANTS.map((v) => `<a href="#${v.id}">${v.name}</a>`).join('');
+document.getElementById('variants').innerHTML = VARIANTS.map((v) => `
+  <section class="variant" id="${v.id}">
+    <div class="variant-head"><h2>${v.name}</h2><span class="tag">${v.tag}</span></div>
+    <p class="variant-desc">${v.desc}</p>
+    <div class="modes">
+      ${['dark', 'light'].map((mode) => `
+        <div>
+          <div class="mode-label">${mode === 'dark' ? 'dunkel' : 'hell'}</div>
+          ${mock(v[mode], mode)}
+          ${swatches(v[mode])}
+          ${checks(v[mode])}
+        </div>`).join('')}
+    </div>
+  </section>`).join('');
+
+const toast = document.getElementById('toast');
+document.addEventListener('click', async (event) => {
+  const button = event.target.closest('.sw');
+  if (!button) return;
+  try {
+    await navigator.clipboard.writeText(button.dataset.hex);
+    toast.textContent = `${button.dataset.hex} kopiert`;
+  } catch {
+    toast.textContent = button.dataset.hex;
+  }
+  toast.classList.add('show');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => toast.classList.remove('show'), 1400);
+});
+
+document.getElementById('pageToggle').addEventListener('click', () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+});
+</script>
+</body>
+</html>
