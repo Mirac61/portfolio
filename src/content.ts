@@ -1,6 +1,7 @@
 export interface ProjectVisual {
   type: 'screenshot' | 'terminal';
   src: string;
+  filename: string;
   alt: string;
 }
 
@@ -14,6 +15,7 @@ export interface Project {
   status: string;
   desc: string;
   meta: Record<string, string>;
+  tech: string[];
   visual: ProjectVisual;
 }
 
@@ -62,9 +64,8 @@ export interface Content {
     meta: string;
   };
   profile: {
-    name: string;
-    role: string;
-    facts: ProfileFact[];
+    host: 'mirac@esslingen',
+    lines: ProfileFact[];
     links: Record<string, ProfileLink>;
   };
   projects: {
@@ -74,6 +75,7 @@ export interface Content {
     repoLabel: string;
     repoHref: string;
     noVisualLabel: string;
+    keybindingHint: string;
     items: Project[];
   };
   stack: {
@@ -114,13 +116,13 @@ export const content: Content = {
   },
 
   profile: {
-    name: 'Mirac Sancak',
-    role: 'softwaretechnik student',
-    facts: [
-      { key: 'studium', value: 'Softwaretechnik (B.Sc.)' },
-      { key: 'hochschule', value: 'HS Esslingen' },
-      { key: 'semester', value: '5. Semester' },
-      { key: 'fokus', value: 'Backend, Tools, Netzwerke' },
+    host: 'mirac@esslingen',
+    lines: [
+      { key: 'name', value: 'Mirac Sancak' },
+      { key: 'studium', value: 'Softwaretechnik, HS Esslingen' },
+      { key: 'semester', value: '5' },
+      { key: 'fokus', value: 'Backend (Go, Java/Spring Boot)' },
+      { key: 'sucht', value: 'Werkstudent · Praxissemester SS 2027' },
     ],
     links: {
       mail: {
@@ -145,6 +147,7 @@ export const content: Content = {
     repoLabel: 'repo ansehen',
     repoHref: 'TODO: Projekt-URL eintragen',
     noVisualLabel: 'TODO: Screenshot oder Terminal-Ausschnitt einfügen',
+    keybindingHint: '↑/↓ auswählen · enter repo öffnen',
     items: [
       {
         id: 'ventorygo',
@@ -159,12 +162,12 @@ export const content: Content = {
           sprache: 'Go',
           framework: 'Gin',
           datenbank: 'PostgreSQL',
-          pdf: 'Maroto v2',
-          auth: 'Argon2id + HttpOnly-Cookies',
         },
+        tech: ['Go', 'Gin', 'PostgreSQL', 'Maroto v2', 'Argon2id'],
         visual: {
           type: 'screenshot',
           src: 'TODO',
+          filename: 'ventorygo.png',
           alt: 'Screenshot der VentoryGo-Oberfläche',
         },
       },
@@ -181,9 +184,11 @@ export const content: Content = {
           sprache: 'C++',
           fokus: 'Profiling, Performance',
         },
+        tech: ['C++', 'Unix', 'Profiling'],
         visual: {
           type: 'terminal',
           src: 'TODO',
+          filename: 'mysh.webm',
           alt: 'Terminal-Ausschnitt der mysh-Shell',
         },
       },
@@ -201,9 +206,11 @@ export const content: Content = {
           framework: 'React',
           thema: 'Netzwerk, VLANs, Rack',
         },
+        tech: ['TypeScript', 'React', 'Netzwerk', 'VLANs'],
         visual: {
           type: 'screenshot',
           src: 'TODO',
+          filename: 'vlanscape.png',
           alt: 'Screenshot des Vlanscape-Netzwerkplaners',
         },
       },
@@ -221,9 +228,11 @@ export const content: Content = {
           frontend: 'Vue',
           thema: 'Aufgaben, Kalender, Notizen',
         },
+        tech: ['Go', 'Vue', 'Planung'],
         visual: {
           type: 'screenshot',
           src: 'TODO',
+          filename: 'kairo.png',
           alt: 'Screenshot der Kairo-Planer-Oberfläche',
         },
       },

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pane } from './Pane';
 import { content } from '../content';
 import type { Project } from '../content';
@@ -38,36 +38,109 @@ function ProjectList({
       aria-label="Projektliste"
       onKeyDown={handleKeyDown}
     >
-      {items.map((project, index) => (
-        <button
-          key={project.id}
-          className={`project-row ${index === activeIndex ? 'active' : ''}`}
-          role="tab"
-          aria-selected={index === activeIndex}
-          aria-controls={`preview-${project.id}`}
-          tabIndex={index === activeIndex ? 0 : -1}
-          onClick={() => onSelect(index)}
-          type="button"
-        >
-          <span className="row-marker" aria-hidden="true">▸</span>
-          <span className="row-info">
-            <span className="row-name">{project.name}</span>
-            <span className="row-type">{project.type}</span>
-          </span>
-          <span className="row-lang">{project.lang}</span>
-        </button>
-      ))}
+      <div className="project-rows">
+        {items.map((project, index) => (
+          <button
+            key={project.id}
+            className={`project-row ${index === activeIndex ? 'active' : ''}`}
+            role="tab"
+            aria-selected={index === activeIndex}
+            aria-controls={`preview-${project.id}`}
+            tabIndex={index === activeIndex ? 0 : -1}
+            onClick={() => onSelect(index)}
+            type="button"
+          >
+            <span className="row-marker" aria-hidden="true">▸</span>
+            <span className="row-info">
+              <span className="row-name">{project.name}</span>
+              <span className="row-type">{project.type}</span>
+            </span>
+            <span className="row-lang">{project.lang}</span>
+          </button>
+        ))}
+      </div>
       <div className="list-footer">
-        <span>{projects.listHint}</span>
+        <span className="list-hint">{projects.keybindingHint}</span>
         <span className="list-position" aria-live="polite">{position}</span>
       </div>
     </div>
   );
 }
 
-function ProjectDetail({ project, isActive }: { project: Project; isActive: boolean }) {
-  const hasVisual = project.visual.src !== 'TODO';
+function TechChips({ items }: { items: string[] }) {
+  return (
+    <div className="tech-chips" aria-label="Technologien">
+      {items.map((tech) => (
+        <span key={tech} className="tech-chip">
+          {tech}
+        </span>
+      ))}
+    </div>
+  );
+}
 
+function VisualBox({ project }: { project: Project }) {
+  const hasVisual = project.visual.src !== 'TODO';
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const apply = () => {
+      const video = videoRef.current;
+      if (!video) return;
+      if (query.matches) {
+        video.pause();
+      } else {
+        void video.play();
+      }
+    };
+    apply();
+    query.addEventListener('change', apply);
+    return () => query.removeEventListener('change', apply);
+  }, [project.id, hasVisual]);
+
+  return (
+    <div className="visual-box" aria-label={project.visual.alt}>
+      <div className="visual-titlebar">
+        <div className="visual-buttons" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+        <span className="visual-filename">{project.visual.filename}</span>
+      </div>
+      <div className="visual-content">
+        {hasVisual ? (
+          project.visual.src.endsWith('.webm') ? (
+            <video
+              ref={videoRef}
+              src={project.visual.src}
+              width={640}
+              height={400}
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-label={project.visual.alt}
+            />
+          ) : (
+            <img
+              src={project.visual.src}
+              alt={project.visual.alt}
+              width={640}
+              height={400}
+              loading="lazy"
+            />
+          )
+        ) : (
+          <div className="visual-placeholder">{projects.noVisualLabel}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ProjectDetail({ project, isActive }: { project: Project; isActive: boolean }) {
   return (
     <article
       className={`project-detail ${isActive ? 'active' : ''}`}
@@ -78,6 +151,7 @@ function ProjectDetail({ project, isActive }: { project: Project; isActive: bool
     >
       <div className="detail-path">{project.path}</div>
       <h3 className="detail-title">{project.title}</h3>
+      <TechChips items={project.tech} />
       <p className="detail-desc">{project.desc}</p>
       <dl className="detail-meta">
         {Object.entries(project.meta).map(([key, value]) => (
@@ -91,19 +165,7 @@ function ProjectDetail({ project, isActive }: { project: Project; isActive: bool
           <dd>{project.status}</dd>
         </div>
       </dl>
-      <div className="detail-visual">
-        {hasVisual ? (
-          <img
-            src={project.visual.src}
-            alt={project.visual.alt}
-            width={640}
-            height={360}
-            loading="lazy"
-          />
-        ) : (
-          <div className="visual-placeholder">{projects.noVisualLabel}</div>
-        )}
-      </div>
+      {isActive && <VisualBox project={project} />}
       <a
         className="btn btn-solid detail-link"
         href={projects.repoHref.startsWith('TODO') ? undefined : projects.repoHref}
