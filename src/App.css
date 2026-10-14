@@ -82,6 +82,13 @@
   --accent-focus: rgba(139, 92, 246, 0.55);
   --accent-faint: rgba(139, 92, 246, 0.10);
 
+  /* logo rows: light purple -> accent */
+  --logo-row-1: #c4b5fd;
+  --logo-row-2: #b69ffb;
+  --logo-row-3: #a889fa;
+  --logo-row-4: #9972f8;
+  --logo-row-5: #8b5cf6;
+
   /* layout */
   --max-width: 1200px;
   --gutter: clamp(16px, 3vw, 32px);
@@ -122,6 +129,12 @@
   --accent-soft: rgba(124, 58, 237, 0.10);
   --accent-focus: rgba(124, 58, 237, 0.50);
   --accent-faint: rgba(124, 58, 237, 0.08);
+
+  --logo-row-1: #8b5cf6;
+  --logo-row-2: #7b4cde;
+  --logo-row-3: #6c3dc6;
+  --logo-row-4: #5c2dad;
+  --logo-row-5: #4c1d95;
 }
 
 /* ===================================================================
@@ -467,16 +480,17 @@ button {
 
 .profil-grid {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: minmax(0, 624px) auto;
   justify-content: start;
   align-items: start;
   gap: 48px;
 }
 
-.profil-logo {
+/* cell ratio 1:2 like a terminal char box; 39 cols x 5 rows -> 39/10 */
+.name-logo {
   display: block;
-  width: 480px;
-  max-width: 100%;
+  width: 100%;
+  aspect-ratio: 39 / 10;
   height: auto;
 }
 
@@ -827,7 +841,7 @@ button {
     gap: 24px;
   }
 
-  .profil-logo {
+  .name-logo {
     width: 100%;
   }
 }

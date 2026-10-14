@@ -1,4 +1,5 @@
 import { Pane } from './Pane';
+import { NameLogo } from './NameLogo';
 import { content, isPending } from '../content';
 
 const { profile } = content;
@@ -7,13 +8,7 @@ export function ProfilePane() {
   return (
     <Pane id="profil" number={0} title="profil" className="profil-pane">
       <div className="profil-grid">
-        <img
-          className="profil-logo"
-          src="/logo.svg"
-          alt="Mirac"
-          width={720}
-          height={192}
-        />
+        <NameLogo />
         <div className="profil-info">
           <div className="ff-host">
             {profile.host}
