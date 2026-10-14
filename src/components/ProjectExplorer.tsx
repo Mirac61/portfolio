@@ -1,147 +1,146 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Pane } from './Pane';
-import { projects } from '../data/projects';
-import type { Project } from '../types';
+import { content } from '../content';
+import type { Project } from '../content';
 
-const ports = [
-  'vlan10', 'vlan10', 'vlan20', 'vlan10',
-  'vlan30', 'vlan20', 'vlan10', 'vlan30',
-  'vlan20', 'vlan10', 'vlan30', 'vlan20',
-  'vlan10', 'vlan20', 'vlan10', 'vlan30',
-  'vlan20', 'vlan10', 'vlan30', 'vlan20',
-  'vlan10', 'vlan30', 'vlan20', 'vlan10',
-];
+const { projects } = content;
 
-function MiniGraphic({ project }: { project: Project }) {
-  if (project.id === 'ventorygo') {
-    return (
-      <div className="mini-graphic inset-box">
-        <div className="invoice-line"><span className="inv-desc">artikel a</span><span className="inv-amount">░░░,░░ €</span></div>
-        <div className="invoice-line"><span className="inv-desc">artikel b</span><span className="inv-amount">░░░,░░ €</span></div>
-        <div className="invoice-line"><span className="inv-desc">artikel c</span><span className="inv-amount">░░░,░░ €</span></div>
-        <div className="invoice-sum"><span>summe</span><span>8B5CF6 €</span></div>
-        <div className="invoice-check">✓ PDF erzeugt</div>
+function ProjectList({
+  items,
+  activeIndex,
+  onSelect,
+}: {
+  items: Project[];
+  activeIndex: number;
+  onSelect: (index: number) => void;
+}) {
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        onSelect(Math.min(activeIndex + 1, items.length - 1));
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        onSelect(Math.max(activeIndex - 1, 0));
+      }
+    },
+    [activeIndex, items.length, onSelect],
+  );
+
+  const position = projects.positionLabel
+    .replace('{current}', String(activeIndex + 1))
+    .replace('{total}', String(items.length));
+
+  return (
+    <div
+      className="project-list"
+      role="tablist"
+      aria-label="Projektliste"
+      onKeyDown={handleKeyDown}
+    >
+      {items.map((project, index) => (
+        <button
+          key={project.id}
+          className={`project-row ${index === activeIndex ? 'active' : ''}`}
+          role="tab"
+          aria-selected={index === activeIndex}
+          aria-controls={`preview-${project.id}`}
+          tabIndex={index === activeIndex ? 0 : -1}
+          onClick={() => onSelect(index)}
+          type="button"
+        >
+          <span className="row-marker" aria-hidden="true">▸</span>
+          <span className="row-info">
+            <span className="row-name">{project.name}</span>
+            <span className="row-type">{project.type}</span>
+          </span>
+          <span className="row-lang">{project.lang}</span>
+        </button>
+      ))}
+      <div className="list-footer">
+        <span>{projects.listHint}</span>
+        <span className="list-position" aria-live="polite">{position}</span>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  if (project.id === 'mysh') {
-    return (
-      <div className="mini-graphic inset-box">
-        <div className="flamegraph">
-          <div className="flame-bar" style={{ '--w': '100%', '--a': 1.0 } as React.CSSProperties} />
-          <div className="flame-bar" style={{ '--w': '72%', '--a': 0.85 } as React.CSSProperties} />
-          <div className="flame-bar" style={{ '--w': '55%', '--a': 0.70 } as React.CSSProperties} />
-          <div className="flame-bar" style={{ '--w': '38%', '--a': 0.55 } as React.CSSProperties} />
-          <div className="flame-bar" style={{ '--w': '21%', '--a': 0.40 } as React.CSSProperties} />
+function ProjectDetail({ project, isActive }: { project: Project; isActive: boolean }) {
+  const hasVisual = project.visual.src !== 'TODO';
+
+  return (
+    <article
+      className={`project-detail ${isActive ? 'active' : ''}`}
+      id={`preview-${project.id}`}
+      role="tabpanel"
+      tabIndex={0}
+      hidden={!isActive}
+    >
+      <div className="detail-path">{project.path}</div>
+      <h3 className="detail-title">{project.title}</h3>
+      <p className="detail-desc">{project.desc}</p>
+      <dl className="detail-meta">
+        {Object.entries(project.meta).map(([key, value]) => (
+          <div className="kv-row" key={key}>
+            <dt>{key}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+        <div className="kv-row">
+          <dt>status</dt>
+          <dd>{project.status}</dd>
         </div>
-        <div className="flame-label">stack ↑ · zeit →</div>
+      </dl>
+      <div className="detail-visual">
+        {hasVisual ? (
+          <img
+            src={project.visual.src}
+            alt={project.visual.alt}
+            width={640}
+            height={360}
+            loading="lazy"
+          />
+        ) : (
+          <div className="visual-placeholder">{projects.noVisualLabel}</div>
+        )}
       </div>
-    );
-  }
-
-  if (project.id === 'vlanscape') {
-    return (
-      <div className="mini-graphic inset-box">
-        <div className="switch-grid" aria-hidden="true">
-          {ports.map((vlan, i) => (
-            <span key={i} className={`port ${vlan}`} />
-          ))}
-        </div>
-        <div className="patch-panel" aria-hidden="true" />
-        <div className="vlan-legend">
-          <span><span className="dot vlan10" aria-hidden="true" /> vlan 10</span>
-          <span><span className="dot vlan20" aria-hidden="true" /> vlan 20</span>
-          <span><span className="dot vlan30" aria-hidden="true" /> vlan 30</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (project.id === 'kairo') {
-    return (
-      <div className="mini-graphic inset-box">
-        <div className="day-plan">
-          <div className="day-block focus">deep work</div>
-          <div className="day-block">emails</div>
-          <div className="day-block">review</div>
-        </div>
-        <div className="buffer-bar" aria-hidden="true">
-          <span className="buffer-fill" style={{ '--p': '37.5%' } as React.CSSProperties} />
-          <span className="buffer-text">[██████░░░░░░░░░░] 2 tage</span>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
+      <a
+        className="btn btn-solid detail-link"
+        href={projects.repoHref.startsWith('TODO') ? undefined : projects.repoHref}
+        target={projects.repoHref.startsWith('TODO') ? undefined : '_blank'}
+        rel={projects.repoHref.startsWith('TODO') ? undefined : 'noopener noreferrer'}
+      >
+        <span aria-hidden="true">[</span> {projects.repoLabel} <span aria-hidden="true">]</span>
+      </a>
+    </article>
+  );
 }
 
 export function ProjectExplorer() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <Pane id="projekte" number={2} title="projekte" count={projects.length} focused className="projekte-pane">
-      <div className="explorer">
-        <div className="explorer-list" role="tablist" aria-label="Projektliste">
-          {projects.map((project, index) => (
-            <button
+    <Pane
+      id="projekte"
+      number={1}
+      title={projects.title}
+      count={projects.items.length}
+      focused
+      className="projects-pane"
+    >
+      <div className="projects-layout">
+        <ProjectList
+          items={projects.items}
+          activeIndex={activeIndex}
+          onSelect={setActiveIndex}
+        />
+        <div className="projects-preview">
+          {projects.items.map((project, index) => (
+            <ProjectDetail
               key={project.id}
-              className={`project-row ${index === activeIndex ? 'active' : ''}`}
-              role="tab"
-              aria-selected={index === activeIndex}
-              aria-controls={`preview-${project.id}`}
-              onClick={() => setActiveIndex(index)}
-              type="button"
-            >
-              <span className="row-marker" aria-hidden="true">▸</span>
-              <span className="row-info">
-                <span className="row-name">{project.name}</span>
-                <span className="row-type">{project.type}</span>
-              </span>
-              <span className="row-lang">{project.lang}</span>
-            </button>
-          ))}
-          <div className="list-footer">
-            <span>klicken zum öffnen</span>
-            <span className="list-position" aria-live="polite">
-              <span className="pos-current">{activeIndex + 1}</span>/<span className="pos-total">{projects.length}</span>
-            </span>
-          </div>
-        </div>
-
-        <div className="explorer-preview">
-          {projects.map((project, index) => (
-            <article
-              key={project.id}
-              className={`preview-panel ${index === activeIndex ? 'active' : ''}`}
-              id={`preview-${project.id}`}
-              role="tabpanel"
-              tabIndex={0}
-              hidden={index !== activeIndex}
-            >
-              <div className="preview-path">{project.path}</div>
-              <h3 className="preview-title">{project.title}</h3>
-              {project.status === 'in arbeit' && <span className="status-pill">in arbeit</span>}
-              <p className="preview-desc">{project.desc}</p>
-              <dl className="preview-meta">
-                {Object.entries(project.meta).map(([key, value]) => (
-                  <div className="kv-row" key={key}>
-                    <dt>{key}</dt>
-                    <dd>{value}</dd>
-                  </div>
-                ))}
-              </dl>
-              <MiniGraphic project={project} />
-              <a
-                className="btn btn-solid preview-link"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span aria-hidden="true">[</span> repo ansehen <span aria-hidden="true">]</span>
-              </a>
-            </article>
+              project={project}
+              isActive={index === activeIndex}
+            />
           ))}
         </div>
       </div>

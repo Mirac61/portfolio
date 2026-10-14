@@ -1,4 +1,94 @@
-export const content = {
+export interface ProjectVisual {
+  type: 'screenshot' | 'terminal';
+  src: string;
+  alt: string;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  title: string;
+  type: string;
+  lang: string;
+  path: string;
+  status: string;
+  desc: string;
+  meta: Record<string, string>;
+  visual: ProjectVisual;
+}
+
+export interface StatusTab {
+  id: string;
+  label: string;
+}
+
+export interface ProfileLink {
+  label: string;
+  href: string;
+}
+
+export interface ProfileFact {
+  key: string;
+  value: string;
+}
+
+export interface StackTreeItem {
+  prefix: string;
+  label: string;
+  folder: boolean;
+}
+
+export interface ReadmeSection {
+  heading: string;
+  paragraphs?: string[];
+  list?: string[];
+}
+
+export interface Content {
+  meta: {
+    title: string;
+    author: string;
+  };
+  statusBar: {
+    session: string;
+    tabs: StatusTab[];
+    hiring: string;
+    internship: string;
+  };
+  footer: {
+    mode: string;
+    branch: string;
+    path: string;
+    meta: string;
+  };
+  profile: {
+    name: string;
+    role: string;
+    facts: ProfileFact[];
+    links: Record<string, ProfileLink>;
+  };
+  projects: {
+    title: string;
+    listHint: string;
+    positionLabel: string;
+    repoLabel: string;
+    repoHref: string;
+    noVisualLabel: string;
+    items: Project[];
+  };
+  stack: {
+    title: string;
+    tree: StackTreeItem[];
+    summary: string;
+  };
+  readme: {
+    title: string;
+    lead: string;
+    sections: ReadmeSection[];
+  };
+}
+
+export const content: Content = {
   meta: {
     title: 'mirac@esslingen ~ portfolio',
     author: 'Mirac Sancak',
@@ -31,7 +121,6 @@ export const content = {
       { key: 'hochschule', value: 'HS Esslingen' },
       { key: 'semester', value: '5. Semester' },
       { key: 'fokus', value: 'Backend, Tools, Netzwerke' },
-      { key: 'shell', value: 'zsh' },
     ],
     links: {
       mail: {
@@ -55,6 +144,7 @@ export const content = {
     positionLabel: '{current}/{total}',
     repoLabel: 'repo ansehen',
     repoHref: 'TODO: Projekt-URL eintragen',
+    noVisualLabel: 'TODO: Screenshot oder Terminal-Ausschnitt einfügen',
     items: [
       {
         id: 'ventorygo',
@@ -72,6 +162,11 @@ export const content = {
           pdf: 'Maroto v2',
           auth: 'Argon2id + HttpOnly-Cookies',
         },
+        visual: {
+          type: 'screenshot',
+          src: 'TODO',
+          alt: 'Screenshot der VentoryGo-Oberfläche',
+        },
       },
       {
         id: 'mysh',
@@ -85,6 +180,11 @@ export const content = {
         meta: {
           sprache: 'C++',
           fokus: 'Profiling, Performance',
+        },
+        visual: {
+          type: 'terminal',
+          src: 'TODO',
+          alt: 'Terminal-Ausschnitt der mysh-Shell',
         },
       },
       {
@@ -101,6 +201,11 @@ export const content = {
           framework: 'React',
           thema: 'Netzwerk, VLANs, Rack',
         },
+        visual: {
+          type: 'screenshot',
+          src: 'TODO',
+          alt: 'Screenshot des Vlanscape-Netzwerkplaners',
+        },
       },
       {
         id: 'kairo',
@@ -115,6 +220,11 @@ export const content = {
           sprache: 'Go',
           frontend: 'Vue',
           thema: 'Aufgaben, Kalender, Notizen',
+        },
+        visual: {
+          type: 'screenshot',
+          src: 'TODO',
+          alt: 'Screenshot der Kairo-Planer-Oberfläche',
         },
       },
     ],
@@ -163,6 +273,4 @@ export const content = {
       },
     ],
   },
-} as const;
-
-export type Content = typeof content;
+} as const satisfies Content;
