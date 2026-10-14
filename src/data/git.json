@@ -1,0 +1,383 @@
+{
+  "generated": "2026-10-14",
+  "repoCount": 18,
+  "languages": [
+    {
+      "name": "go",
+      "files": 347,
+      "lines": 40556,
+      "repos": 8
+    },
+    {
+      "name": "typescript",
+      "files": 255,
+      "lines": 22751,
+      "repos": 8
+    },
+    {
+      "name": "vue",
+      "files": 65,
+      "lines": 10814,
+      "repos": 4
+    },
+    {
+      "name": "c++",
+      "files": 11,
+      "lines": 2034,
+      "repos": 1
+    },
+    {
+      "name": "java",
+      "files": 36,
+      "lines": 1877,
+      "repos": 1
+    },
+    {
+      "name": "sql",
+      "files": 40,
+      "lines": 553,
+      "repos": 5
+    }
+  ],
+  "activity": {
+    "start": "2026-04-19",
+    "days": [
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      7,
+      6,
+      6,
+      6,
+      2,
+      6,
+      0,
+      0,
+      2,
+      4,
+      0,
+      0,
+      2,
+      1,
+      5,
+      1,
+      7,
+      4,
+      18,
+      6,
+      3,
+      3,
+      1,
+      0,
+      4,
+      0,
+      1,
+      6,
+      0,
+      5,
+      7,
+      2,
+      0,
+      5,
+      5,
+      3,
+      5,
+      0,
+      3,
+      2,
+      8,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      2,
+      1,
+      1,
+      3,
+      4,
+      10,
+      5,
+      0,
+      0,
+      0,
+      0,
+      14,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      8,
+      0,
+      5,
+      0,
+      9,
+      9,
+      33,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      43,
+      37,
+      79,
+      10,
+      0,
+      0,
+      9,
+      0,
+      13,
+      0,
+      0,
+      0
+    ]
+  },
+  "projects": {
+    "ventorygo": {
+      "commits": 150,
+      "first": "2026-07-16",
+      "last": "2026-09-24",
+      "contributors": 2,
+      "log": [
+        {
+          "hash": "41d43bf",
+          "date": "2026-09-20",
+          "subject": "Feat: Final redesign of login and dashboard system"
+        },
+        {
+          "hash": "ec8076b",
+          "date": "2026-08-26",
+          "subject": "fix: tighten preview PDF file permissions (gosec G306)"
+        },
+        {
+          "hash": "34b0ae8",
+          "date": "2026-08-26",
+          "subject": "fix: use Go 1.27.0 instead of pinning to a 1.26 patch"
+        },
+        {
+          "hash": "f0450e0",
+          "date": "2026-08-26",
+          "subject": "fix: bump Go toolchain to 1.26.3 to clear govulncheck stdlib CVEs"
+        },
+        {
+          "hash": "069d9aa",
+          "date": "2026-08-26",
+          "subject": "feat: pdf rendering and fonts"
+        },
+        {
+          "hash": "8d9f559",
+          "date": "2026-08-23",
+          "subject": "Feat: addition of Dashboard"
+        }
+      ]
+    },
+    "mysh": {
+      "commits": 59,
+      "first": "2026-02-27",
+      "last": "2026-10-14",
+      "contributors": 1,
+      "log": [
+        {
+          "hash": "cc62f3e",
+          "date": "2026-10-14",
+          "subject": "fix: safer string handling, _exit in children, faster git status"
+        },
+        {
+          "hash": "c9edd59",
+          "date": "2026-09-09",
+          "subject": "fix: read stdin directly when not interactive"
+        },
+        {
+          "hash": "e90c7a4",
+          "date": "2026-09-08",
+          "subject": "feat: improved startup time and updated README"
+        },
+        {
+          "hash": "c2e72a3",
+          "date": "2026-09-05",
+          "subject": "refactor: proper inlining and .hpp instead of .h"
+        },
+        {
+          "hash": "a495565",
+          "date": "2026-04-29",
+          "subject": "refactor: clearing the structure"
+        },
+        {
+          "hash": "7b8a10b",
+          "date": "2026-04-28",
+          "subject": "feat: reloading config with prompt 'reload'"
+        }
+      ]
+    },
+    "vlanscape": {
+      "commits": 41,
+      "first": "2026-09-22",
+      "last": "2026-09-28",
+      "contributors": 1,
+      "log": [
+        {
+          "hash": "ab00071",
+          "date": "2026-09-28",
+          "subject": "fix(frontend): rack pane scrolls instead of pushing the inspector away"
+        },
+        {
+          "hash": "58aca28",
+          "date": "2026-09-28",
+          "subject": "feat(frontend): fill used patch panel ports with their path colour"
+        },
+        {
+          "hash": "2f0993b",
+          "date": "2026-09-28",
+          "subject": "fix(frontend): legend shows trunks in the neutral cable colour"
+        },
+        {
+          "hash": "5ba77b5",
+          "date": "2026-09-28",
+          "subject": "feat(frontend): trunk labels as coloured dots, IDs on hover"
+        },
+        {
+          "hash": "05c1744",
+          "date": "2026-09-28",
+          "subject": "feat(frontend): dock the add palette and keep fitted devices clear of overlays"
+        },
+        {
+          "hash": "6778c12",
+          "date": "2026-09-28",
+          "subject": "fix(frontend): legend matches the cables on the canvas"
+        }
+      ]
+    },
+    "kairo": {
+      "commits": 96,
+      "first": "2026-10-06",
+      "last": "2026-10-12",
+      "contributors": 1,
+      "log": [
+        {
+          "hash": "5fb5ee0",
+          "date": "2026-10-12",
+          "subject": "feat(frontend): Zeichnungen mit Excalidraw anlegen und bearbeiten, in Notizen einbetten und live aktualisieren"
+        },
+        {
+          "hash": "5dda037",
+          "date": "2026-10-12",
+          "subject": "feat(backend): Zeichnungen (.excalidraw) im Notizordner hochladen, ausliefern und ersetzen"
+        },
+        {
+          "hash": "428195c",
+          "date": "2026-10-12",
+          "subject": "feat: Notizen um Ordner-Upload, Code-Viewer für C/C++ und Makefiles und Rechtschreibprüfung erweitert"
+        },
+        {
+          "hash": "86af00c",
+          "date": "2026-10-12",
+          "subject": "feat(frontend): Einstellungen für Startseite, Theme, Akzentfarbe, Wochenbeginn und Tagesbereich"
+        },
+        {
+          "hash": "1e01d76",
+          "date": "2026-10-12",
+          "subject": "feat: offene GitHub-Issues als Aufgabe übernehmen (gh-CLI, gesamt und je Projekt)"
+        },
+        {
+          "hash": "01bd1b4",
+          "date": "2026-10-12",
+          "subject": "feat: Gewohnheiten mit Dauer, Dialog mit allen Feldern und Anzeige im Kalender"
+        }
+      ]
+    }
+  }
+}
