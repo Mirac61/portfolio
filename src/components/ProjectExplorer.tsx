@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pane } from './Pane';
-import { content } from '../content';
+import { content, isPending } from '../content';
 import type { Project } from '../content';
 
 const { projects } = content;
@@ -80,8 +80,8 @@ function TechChips({ items }: { items: string[] }) {
 }
 
 function VisualBox({ project }: { project: Project }) {
-  const hasVisual = project.visual.src !== 'TODO';
   const videoRef = useRef<HTMLVideoElement>(null);
+  const isVideo = project.visual.src.endsWith('.webm');
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -97,7 +97,12 @@ function VisualBox({ project }: { project: Project }) {
     apply();
     query.addEventListener('change', apply);
     return () => query.removeEventListener('change', apply);
-  }, [project.id, hasVisual]);
+  }, [project.id, isVideo]);
+
+  // no fake or empty frames: pending visuals hide the box entirely
+  if (isPending(project.visual.src)) {
+    return null;
+  }
 
   return (
     <div className="visual-box" aria-label={project.visual.alt}>
@@ -110,30 +115,26 @@ function VisualBox({ project }: { project: Project }) {
         <span className="visual-filename">{project.visual.filename}</span>
       </div>
       <div className="visual-content">
-        {hasVisual ? (
-          project.visual.src.endsWith('.webm') ? (
-            <video
-              ref={videoRef}
-              src={project.visual.src}
-              width={640}
-              height={400}
-              autoPlay
-              muted
-              loop
-              playsInline
-              aria-label={project.visual.alt}
-            />
-          ) : (
-            <img
-              src={project.visual.src}
-              alt={project.visual.alt}
-              width={640}
-              height={400}
-              loading="lazy"
-            />
-          )
+        {isVideo ? (
+          <video
+            ref={videoRef}
+            src={project.visual.src}
+            width={640}
+            height={400}
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-label={project.visual.alt}
+          />
         ) : (
-          <div className="visual-placeholder">{projects.noVisualLabel}</div>
+          <img
+            src={project.visual.src}
+            alt={project.visual.alt}
+            width={640}
+            height={400}
+            loading="lazy"
+          />
         )}
       </div>
     </div>
@@ -160,20 +161,24 @@ function ProjectDetail({ project, isActive }: { project: Project; isActive: bool
             <dd>{value}</dd>
           </div>
         ))}
-        <div className="kv-row">
-          <dt>status</dt>
-          <dd>{project.status}</dd>
-        </div>
+        {!isPending(project.status) && (
+          <div className="kv-row">
+            <dt>status</dt>
+            <dd>{project.status}</dd>
+          </div>
+        )}
       </dl>
       {isActive && <VisualBox project={project} />}
-      <a
-        className="btn btn-solid detail-link"
-        href={projects.repoHref.startsWith('TODO') ? undefined : projects.repoHref}
-        target={projects.repoHref.startsWith('TODO') ? undefined : '_blank'}
-        rel={projects.repoHref.startsWith('TODO') ? undefined : 'noopener noreferrer'}
-      >
-        <span aria-hidden="true">[</span> {projects.repoLabel} <span aria-hidden="true">]</span>
-      </a>
+      {!isPending(project.repoUrl) && (
+        <a
+          className="btn btn-solid detail-link"
+          href={project.repoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span aria-hidden="true">[</span> {projects.repoLabel} <span aria-hidden="true">]</span>
+        </a>
+      )}
     </article>
   );
 }

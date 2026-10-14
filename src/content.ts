@@ -16,6 +16,7 @@ export interface Project {
   desc: string;
   meta: Record<string, string>;
   tech: string[];
+  repoUrl: string;
   visual: ProjectVisual;
 }
 
@@ -46,6 +47,11 @@ export interface ReadmeSection {
   list?: string[];
 }
 
+// TODO values stay in this file for tracking but must never render
+export function isPending(value: string): boolean {
+  return value.startsWith('TODO');
+}
+
 export interface Content {
   meta: {
     title: string;
@@ -73,8 +79,6 @@ export interface Content {
     listHint: string;
     positionLabel: string;
     repoLabel: string;
-    repoHref: string;
-    noVisualLabel: string;
     keybindingHint: string;
     items: Project[];
   };
@@ -131,7 +135,7 @@ export const content: Content = {
       },
       github: {
         label: 'github',
-        href: 'TODO: echte GitHub-URL eintragen',
+        href: 'https://github.com/Mirac61',
       },
       linkedin: {
         label: 'linkedin',
@@ -145,8 +149,6 @@ export const content: Content = {
     listHint: 'klicken oder ↑/↓ zum auswählen',
     positionLabel: '{current}/{total}',
     repoLabel: 'repo ansehen',
-    repoHref: 'TODO: Projekt-URL eintragen',
-    noVisualLabel: 'TODO: Screenshot oder Terminal-Ausschnitt einfügen',
     keybindingHint: '↑/↓ auswählen · enter repo öffnen',
     items: [
       {
@@ -164,6 +166,7 @@ export const content: Content = {
           datenbank: 'PostgreSQL',
         },
         tech: ['Go', 'Gin', 'PostgreSQL', 'Maroto v2', 'Argon2id'],
+        repoUrl: 'https://github.com/Mirac61/VentoryGo',
         visual: {
           type: 'screenshot',
           src: 'TODO',
@@ -185,6 +188,7 @@ export const content: Content = {
           fokus: 'Profiling, Performance',
         },
         tech: ['C++', 'Unix', 'Profiling'],
+        repoUrl: 'https://github.com/Mirac61/mysh',
         visual: {
           type: 'terminal',
           src: 'TODO',
@@ -207,6 +211,7 @@ export const content: Content = {
           thema: 'Netzwerk, VLANs, Rack',
         },
         tech: ['TypeScript', 'React', 'Netzwerk', 'VLANs'],
+        repoUrl: 'https://github.com/Mirac61/Vlanscape',
         visual: {
           type: 'screenshot',
           src: 'TODO',
@@ -229,6 +234,7 @@ export const content: Content = {
           thema: 'Aufgaben, Kalender, Notizen',
         },
         tech: ['Go', 'Vue', 'Planung'],
+        repoUrl: 'https://github.com/Mirac61/Kairo',
         visual: {
           type: 'screenshot',
           src: 'TODO',

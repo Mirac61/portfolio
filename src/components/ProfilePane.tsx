@@ -1,5 +1,5 @@
 import { Pane } from './Pane';
-import { content } from '../content';
+import { content, isPending } from '../content';
 
 const { profile } = content;
 
@@ -33,13 +33,15 @@ export function ProfilePane() {
           <div className="profil-actions">
             {Object.entries(profile.links).map(([key, { label, href }]) => {
               const isPrimary = key === 'mail';
+              const pending = isPending(href);
               return (
                 <a
                   key={label}
                   className={`btn ${isPrimary ? 'btn-solid' : 'btn-ghost'}`}
-                  href={href.startsWith('TODO') ? undefined : href}
-                  target={href.startsWith('TODO') ? undefined : '_blank'}
-                  rel={href.startsWith('TODO') ? undefined : 'noopener noreferrer'}
+                  href={pending ? undefined : href}
+                  aria-disabled={pending || undefined}
+                  target={pending ? undefined : '_blank'}
+                  rel={pending ? undefined : 'noopener noreferrer'}
                 >
                   <span aria-hidden="true">[</span> {label} <span aria-hidden="true">]</span>
                 </a>
