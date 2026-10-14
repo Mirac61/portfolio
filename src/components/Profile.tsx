@@ -1,5 +1,6 @@
 import { Pane } from './Pane';
 import { AsciiBanner } from './AsciiBanner';
+import { Headline } from './Headline';
 import { content, links } from '../content';
 
 const { profile } = content;
@@ -32,10 +33,10 @@ export function ProfileMain() {
   return (
     <div className="profile-main">
       <AsciiBanner />
-      <h1 className="profil-h1">
-        {profile.headline}
-        <span className="cursor" aria-hidden="true" />
-      </h1>
+      <div className="prof-head">
+        <Headline text={profile.headline} />
+        <p className="prof-sub">{profile.subline}</p>
+      </div>
       <div className="actions">
         {links.map(({ label, href }, index) => (
           <a
@@ -45,18 +46,23 @@ export function ProfileMain() {
             target={href.startsWith('mailto:') ? undefined : '_blank'}
             rel="noopener noreferrer"
           >
-            <span aria-hidden="true">[</span> {label} <span aria-hidden="true">]</span>
+            {label}
           </a>
         ))}
       </div>
-      <dl className="neofetch">
-        {profile.facts.map(({ key, value }) => (
-          <div className="nf-row" key={key}>
-            <dt>{key}</dt>
-            <dd>{value}</dd>
-          </div>
-        ))}
-      </dl>
+      <hr className="prof-divider" />
+      {/* the info grid is one centred block; the entries inside stay left-aligned */}
+      <div className="prof-info">
+        <dl className="prof-facts">
+          {profile.facts.map(({ key, value, sub }) => (
+            <div className="prof-fact" key={key}>
+              <dt>{key}</dt>
+              <dd className="prof-value">{value}</dd>
+              {sub ? <dd className="prof-subvalue">{sub}</dd> : null}
+            </div>
+          ))}
+        </dl>
+      </div>
     </div>
   );
 }

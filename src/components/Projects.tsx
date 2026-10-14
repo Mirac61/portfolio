@@ -74,7 +74,7 @@ export function ProjectMain({ project }: { project: Project }) {
         {project.repoUrl && (
           <div className="actions">
             <a className="btn btn-solid" href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-              <span aria-hidden="true">[</span> {projects.repoLabel} <span aria-hidden="true">]</span>
+              {projects.repoLabel}
             </a>
           </div>
         )}

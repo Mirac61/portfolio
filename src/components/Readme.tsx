@@ -1,37 +1,31 @@
+import { useEffect } from 'react';
 import { Pane } from './Pane';
-import { content, links } from '../content';
+import { SelectList } from './SelectList';
+import { content, links, readmeHeadings as headings } from '../content';
 
 const { readme } = content;
 
-// the side pane lists these headings, the text itself only lives in the main view
-const headings = [...readme.sections.map(({ heading }) => heading), readme.linksHeading];
 const sectionId = (index: number) => `readme-${index}`;
 
-export function ReadmeSide({ focused, onActivate }: { focused: boolean; onActivate: () => void }) {
-  const open = (index: number) => {
-    onActivate();
-    // after the window switch has rendered the main view
-    setTimeout(() => document.getElementById(sectionId(index))?.scrollIntoView({ block: 'start' }));
-  };
+export function ReadmeSide({
+  focused,
+  onActivate,
+  index,
+  onSelect,
+}: {
+  focused: boolean;
+  onActivate: () => void;
+  index: number;
+  onSelect: (index: number) => void;
+}) {
   return (
     <Pane id="readme" title={readme.title} focused={focused} onActivate={onActivate}>
-      <ul className="select-list">
-        {headings.map((heading, index) => (
-          <li key={heading}>
-            <button
-              type="button"
-              className="select-row"
-              onClick={(event) => {
-                event.stopPropagation();
-                open(index);
-              }}
-            >
-              <span className="row-marker" />
-              <span className="row-name">{heading}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      <SelectList
+        label="Readme-Abschnitte"
+        index={index}
+        onSelect={onSelect}
+        items={headings.map((heading) => ({ key: heading, name: heading }))}
+      />
     </Pane>
   );
 }
@@ -45,8 +39,12 @@ function Heading({ index }: { index: number }) {
   );
 }
 
-export function ReadmeMain() {
+export function ReadmeMain({ index }: { index: number }) {
   const last = readme.sections.length;
+  // the selected heading scrolls its section into view
+  useEffect(() => {
+    document.getElementById(sectionId(index))?.scrollIntoView({ block: 'start' });
+  }, [index]);
   return (
     <div className="readme-content">
       {readme.sections.map((section, index) => (

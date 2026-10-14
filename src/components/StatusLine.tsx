@@ -5,8 +5,8 @@ const { footer } = content;
 
 // mirrors the keybindings in App.tsx
 const HINTS = [
-  { key: '0-3', label: 'fenster' },
-  { key: 'j/k', label: 'auswahl' },
+  { key: '1-4', label: 'fenster' },
+  { key: 'j/k ↑↓', label: 'navigieren' },
   { key: 't', label: 'theme' },
 ];
 
@@ -41,8 +41,7 @@ export function StatusLine({ theme, onToggle }: { theme: Theme; onToggle: () => 
           type="button"
           aria-label={theme === 'dark' ? 'Helles Design einschalten' : 'Dunkles Design einschalten'}
         >
-          <span aria-hidden="true">[</span> {theme === 'dark' ? 'light' : 'dark'}{' '}
-          <span aria-hidden="true">]</span>
+          {theme === 'dark' ? 'light' : 'dark'}
         </button>
         <span className="status-meta">{footer.meta}</span>
       </div>

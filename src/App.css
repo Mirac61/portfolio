@@ -39,69 +39,70 @@
 :root {
   color-scheme: dark;
 
-  --bg: #0a0a0a;
-  --bg-bar: #0e0e0e;
-  --bg-inset: #0d0d0d;
-  --bg-raised: #111111;
-  --bg-tab-active: #1c1c1c;
-  --bg-hover: #141414;
-  --bg-tab-hover: #1a1a1a;
+  --bg: #0b0b0d;
+  --bg-bar: #0f0f12;
+  --bg-inset: #131316;
+  --bg-raised: #18181c;
+  --bg-tab-active: #222228;
+  --bg-hover: #16161a;
+  --bg-tab-hover: #1c1c21;
 
-  --border: #2a2a2a;
-  --border-subtle: #1f1f1f;
-  --border-hover: #3c3c3c;
-  --border-control: #333333;
-  --border-ghost-hover: #555555;
+  /* pane edges stay clearly visible against the near-black page */
+  --border: #3a3a43;
+  --border-subtle: #232329;
+  --border-hover: #575761;
+  --border-control: #44444d;
+  --border-ghost-hover: #66666f;
 
-  --text: #ededed;
-  --text-muted: #9a9a9a;
-  --text-dim: #808080;
-  --text-file: #d4d4d4;
-  --text-deco: #4a4a4a;
-  --text-hash: #5a5a5a;
+  --text: #ececef;
+  --text-muted: #a6a6ad;
+  --text-dim: #8e8e96;
+  --text-file: #d6d6da;
+  --text-deco: #4c4c54;
+  --text-hash: #5e5e66;
 
-  --accent: #8b5cf6;
-  --accent-text: #b495f9;
-  --accent-selected: rgba(139, 92, 246, 0.14);
-  --accent-focus: rgba(139, 92, 246, 0.55);
+  --accent: #a78bfa;
+  --accent-text: #c4b5fd;
+  --accent-selected: rgba(167, 139, 250, 0.14);
+  --accent-focus: rgba(167, 139, 250, 0.55);
   --on-accent: #0a0a0a;
 
-  --banner-1: #d3c1fc;
-  --banner-2: #c5aefb;
-  --banner-3: #b79af9;
-  --banner-4: #a986f8;
-  --banner-5: #9a71f7;
-  --banner-6: #8b5cf6;
+  --banner-1: #e4dcfe;
+  --banner-2: #d8cdfd;
+  --banner-3: #cbbcfc;
+  --banner-4: #bfacfb;
+  --banner-5: #b39cfa;
+  --banner-6: #a78bfa;
 
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
   --dur: 0.18s;
 }
 
-/* Light: same structure, ink on cool paper; #7C3AED keeps white labels above 4.5:1 */
+/* Light: same structure, soft grey instead of white; #7C3AED keeps white labels above 4.5:1 */
 :root[data-theme='light'] {
   color-scheme: light;
 
-  --bg: #f7f7f8;
-  --bg-bar: #efeff2;
-  --bg-inset: #f0f0f3;
-  --bg-raised: #e6e6ea;
-  --bg-tab-active: #e0e0e6;
-  --bg-hover: #ececf0;
-  --bg-tab-hover: #e6e6eb;
+  --bg: #f1f1f3;
+  --bg-bar: #e8e8eb;
+  --bg-inset: #ebebee;
+  --bg-raised: #e2e2e6;
+  --bg-tab-active: #dadadf;
+  --bg-hover: #e8e8ec;
+  --bg-tab-hover: #e0e0e5;
 
-  --border: #d4d4db;
-  --border-subtle: #e2e2e8;
-  --border-hover: #a8a8b2;
-  --border-control: #c6c6ce;
-  --border-ghost-hover: #8b8b95;
+  --border: #b4b4bd;
+  --border-subtle: #dcdce1;
+  --border-hover: #8e8e98;
+  --border-control: #a8a8b1;
+  --border-ghost-hover: #7a7a84;
 
   --text: #18181b;
-  --text-muted: #46464e;
-  --text-dim: #63636b;
-  --text-file: #2a2a2f;
-  --text-deco: #b6b6be;
-  --text-hash: #9a9aa3;
+  --text-muted: #3f3f46;
+  --text-dim: #55555c;
+  --text-file: #27272a;
+  --text-deco: #a8a8b0;
+  --text-hash: #8a8a93;
 
   --accent: #7c3aed;
   --accent-text: #6d28d9;
@@ -115,6 +116,12 @@
   --banner-4: #8152f0;
   --banner-5: #763eea;
   --banner-6: #6d28d9;
+}
+
+/* theme switch: the whole page crossfades instead of flashing */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
 }
 
 /* ===================================================================
@@ -187,6 +194,7 @@ button {
 
 /* running text: project description and readme */
 .detail-desc,
+.stack-desc,
 .readme-content p,
 .readme-content section > ul:not(.readme-links) li {
   max-width: 60ch;
@@ -302,6 +310,20 @@ button {
   container-type: inline-size;
   scrollbar-width: thin;
   scrollbar-color: var(--border-hover) transparent;
+  /* every window and project eases in instead of snapping */
+  animation: pane-in 0.4s ease both;
+}
+
+/* the main view fades up when the cursor opens another window, project or file */
+@keyframes pane-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (min-width: 900px) and (min-height: 560px) {
@@ -449,11 +471,19 @@ button {
   text-align: left;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color var(--dur) ease;
+  /* the cursor glides between rows instead of blinking */
+  transition: background-color 0.28s ease, color 0.28s ease;
 }
 
-.select-row:hover {
+/* no hover while the keyboard drives the cursor, it would look like a second selection */
+:root:not([data-nav='keys']) .select-row:hover {
   background: var(--bg-hover);
+}
+
+/* folder rows stay quiet: they group, the files carry the content */
+.select-row.folder .row-name {
+  color: var(--text-dim);
+  font-weight: 500;
 }
 
 .select-row:focus-visible {
@@ -464,13 +494,23 @@ button {
   background: var(--accent-selected);
 }
 
-/* the selection of an unfocused pane stays visible but neutral, like lazygit */
+/* the cursor row already shows focus through its colour and marker */
+.pane.focused .select-row.active:focus-visible {
+  outline: none;
+}
+
+/* other panes only keep a dim marker on their remembered row, so there is one cursor on screen */
 .pane:not(.focused) .select-row.active {
-  background: var(--bg-tab-active);
+  background: transparent;
+}
+
+.pane:not(.focused) .select-row.active .row-marker {
+  color: var(--text-deco);
 }
 
 .row-marker {
   color: transparent;
+  transition: color 0.28s ease;
 }
 
 .pane.focused .select-row.active .row-marker {
@@ -482,12 +522,15 @@ button {
   text-overflow: ellipsis;
 }
 
+/* "# projekt" tag: small and recessive next to the file name */
 .row-detail {
-  color: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--text-deco);
 }
 
 .select-row.active .row-detail {
-  color: var(--text-muted);
+  color: var(--text-dim);
 }
 
 /* ===================================================================
@@ -496,8 +539,9 @@ button {
 .profile-main {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 32px;
+  text-align: center;
 }
 
 .ascii-banner {
@@ -505,6 +549,8 @@ button {
   /* at most 60% of the pane, and short enough for a 720px laptop screen */
   width: min(60cqi, 72vh, 720px);
   height: auto;
+  /* the pixel rects inherit this fill, so the logo follows the theme switch */
+  fill: var(--accent);
   overflow: visible;
 }
 
@@ -512,6 +558,21 @@ button {
   font-size: 20px;
   font-weight: 700;
   line-height: 1.4;
+}
+
+/* each character keeps its box, only its opacity changes, so nothing jumps */
+.h1-ch {
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.h1-ch.off {
+  opacity: 0;
+  filter: blur(2px);
+}
+
+.h1-ch.on {
+  opacity: 1;
+  filter: blur(0);
 }
 
 .cursor {
@@ -530,34 +591,70 @@ button {
   }
 }
 
-.neofetch {
-  flex: none;
-  max-width: 100%;
+/* headline and subline stay together as one block */
+.prof-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
-.nf-row {
+.prof-sub {
+  font-family: var(--sans);
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+/* the bottom block is centred under the logo, so it sits "mittiger";
+   max-width keeps it from stretching to the pane edges */
+.prof-divider {
+  width: 100%;
+  max-width: 720px;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* the whole info grid sits centred as one block under the header */
+.prof-info {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* facts as a two-column grid: label, value, optional sub.
+   the block is centred, but every entry stays left-aligned */
+.prof-facts {
   display: grid;
-  grid-template-columns: 10ch auto;
-  line-height: 1.8;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 48px;
+  width: 100%;
 }
 
-.nf-row dt {
+.prof-fact {
+  text-align: left;
+}
+
+.prof-fact dt {
+  font-size: 12px;
   color: var(--text-dim);
 }
 
-/* values never wrap, so narrow screens put the key above its value */
-.nf-row dd {
-  white-space: nowrap;
+.prof-value {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.prof-subvalue {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
 @container (max-width: 440px) {
-  .nf-row {
+  .prof-facts {
     grid-template-columns: minmax(0, 1fr);
-    line-height: 1.6;
-  }
-
-  .nf-row + .nf-row {
-    margin-top: 8px;
   }
 }
 
@@ -666,52 +763,169 @@ button {
 }
 
 /* ===================================================================
-   Stack: directory tree
+   Stack: directory metaphor – the main pane is an `ls` listing, cd'ing
+   into a file swaps it for a slot that holds the per-entry detail view
    =================================================================== */
-.tree {
-  display: flex;
-  flex-direction: column;
-  /* the selection highlight ends with the longest line, not the pane */
-  width: max-content;
-  max-width: 100%;
-  line-height: 1.6;
-  white-space: pre;
-}
-
-.tree-group {
-  margin: 0 -8px;
-  padding: 0 8px;
-  border-radius: 8px;
-}
-
-.tree-group.selected {
-  background: var(--accent-selected);
-}
-
-.tree-deco {
-  color: var(--text-deco);
-}
-
-.tree-folder {
-  font-weight: 700;
-}
-
-.tree-file {
+.cd-prompt-line {
+  margin: 0 0 4px;
   color: var(--text-file);
 }
 
-.tree-used {
+.cd-prompt {
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
+.ls-comment {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--text-hash);
+}
+
+.ls-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ls-row {
+  display: grid;
+  grid-template-columns: 12ch minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur) ease;
+}
+
+/* no hover while the keyboard drives the cursor, it would look like a second selection */
+:root:not([data-nav='keys']) .ls-row:hover {
+  background: var(--bg-hover);
+}
+
+.ls-row.on {
+  background: var(--accent-selected);
+}
+
+.ls-name {
+  font-weight: 700;
+  color: var(--text-file);
+  white-space: nowrap;
+}
+
+.ls-desc {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ls-tags {
+  font-size: 11px;
+  color: var(--text-deco);
+  white-space: nowrap;
+}
+
+.ls-row.on .ls-tags {
   color: var(--text-dim);
 }
 
-.tree-group.selected .tree-used {
-  color: var(--text-muted);
+/* cd'd in: breadcrumb and back button above the detail slot */
+.cd-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 16px;
 }
 
-.tree-summary {
-  padding-top: 16px;
+.cd-crumb {
   font-size: 12px;
   color: var(--text-dim);
+}
+
+.cd-back {
+  padding: 2px 8px;
+  border: 1px solid var(--border-control);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color var(--dur) ease, border-color var(--dur) ease;
+}
+
+.cd-back:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-ghost-hover);
+}
+
+.stack-name {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* the slot mirac fills with his own per-entry detail view later */
+.stack-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px;
+  border: 1px dashed var(--border-hover);
+  border-radius: 12px;
+  background: var(--bg-inset);
+}
+
+.stack-slot-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-hash);
+}
+
+.stack-slot .stack-art {
+  font-size: clamp(8px, 2cqw, 20px);
+}
+
+.stack-used {
+  color: var(--text-dim);
+}
+
+.stack-used-label {
+  color: var(--text-hash);
+}
+
+.cd-hint {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text-hash);
+}
+
+/* ascii art: inside the slot, scaled to the pane width */
+.stack-art {
+  margin: 0;
+  max-width: 100%;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: clamp(8px, 2.5cqw, 24px);
+  /* line-height 1: the block glyphs tile seamlessly, no fugue lines in the art */
+  line-height: 1;
+  white-space: pre;
+  overflow-x: auto;
+  /* same-colour halo fills the antialiasing seams between block glyphs */
+  text-shadow: 0 0 1px currentColor;
+}
+
+.stack-art code {
+  font: inherit;
 }
 
 /* ===================================================================
@@ -871,6 +1085,16 @@ button {
 }
 
 @media (max-width: 640px) {
+  /* the ls listing drops the description column, name and tags stay */
+  .ls-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .ls-desc {
+    display: none;
+  }
+
   /* toggle joins the mode row, the meta line gets its own */
   .status-right {
     display: contents;
@@ -922,7 +1146,8 @@ button {
 }
 
 /* the share image keeps banner, headline and link; details stay on the page */
-.og-frame .neofetch {
+.og-frame .prof-divider,
+.og-frame .prof-facts {
   display: none;
 }
 

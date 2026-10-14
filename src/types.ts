@@ -43,7 +43,9 @@ export interface Content {
     host: string;
     status: string;
     headline: string;
-    facts: { key: string; value: string }[];
+    // eine Zeile unter der Headline; facts werden als 2-Spalten-Grid gezeigt, sub optional
+    subline: string;
+    facts: { key: string; value: string; sub?: string }[];
     links: Link[];
   };
   projects: {
@@ -54,6 +56,8 @@ export interface Content {
   stack: {
     title: string;
     groups: { folder: string; files: string[] }[];
+    // Beschreibung je Eintrag (Ordner oder Datei). art = Mono-Grafik, credit = Quelle
+    info: Record<string, { desc: string; art?: string[]; credit?: string }>;
   };
   readme: {
     title: string;
@@ -61,3 +65,7 @@ export interface Content {
     linksHeading: string;
   };
 }
+
+export type StackRow =
+  | { key: string; kind: 'folder'; folder: string; files: string[]; depth: 0 }
+  | { key: string; kind: 'file'; folder: string; file: string; depth: 1 };

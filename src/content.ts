@@ -1,6 +1,6 @@
 // Alle Texte der Seite. Nur diese Datei anfassen, um Inhalte zu ändern.
 // Leere Strings ('') werden nicht angezeigt. Bilder liegen in public/media.
-import type { Content } from './types';
+import type { Content, StackRow } from './types';
 
 export const content: Content = {
   // Kasten oben links in der tmux-Leiste
@@ -18,19 +18,21 @@ export const content: Content = {
     title: 'profil',
     host: 'mirac@esslingen',
     status: 'werkstudent: offen',
-    headline: 'Ich baue Backends mit Go und Java.',
+    headline: 'Ich baue Systeme, nicht nur Features.',
+    subline: 'Backend Engineering · Go · Java',
     facts: [
       { key: 'name', value: 'Mirac Sancak' },
-      { key: 'studium', value: 'Softwaretechnik, HS Esslingen' },
+      { key: 'studium', value: 'Softwaretechnik', sub: 'HS Esslingen' },
       { key: 'semester', value: '5' },
-      { key: 'fokus', value: 'Backend (Go, Java/Spring Boot)' },
-      { key: 'sucht', value: 'Werkstudent · Praxissemester SS 2027' },
+      { key: 'fokus', value: 'Backend', sub: 'Go · Java · Spring Boot' },
+      { key: 'hobbies', value: 'Calisthenics · Fußball · Motorsport' },
+      { key: 'sucht', value: 'Werkstudent · Praxissemester', sub: 'SS 2027' },
     ],
     // der erste sichtbare Link wird als lila Button hervorgehoben
     links: [
       { label: 'mail', href: '' }, // z.B. 'mailto:name@example.com'
       { label: 'github', href: 'https://github.com/Mirac61' },
-      { label: 'linkedin', href: '' }, // z.B. 'https://www.linkedin.com/in/...'
+      { label: 'linkedin', href: 'https://linkedin.com/in/mirac-ibrahim-sancak-47917238b' }, 
     ],
   },
 
@@ -100,8 +102,11 @@ export const content: Content = {
     ],
   },
 
-  // 2: Stack. Ein Eintrag, der in den meta-Werten eines Projekts vorkommt,
-  // bekommt automatisch "# projektname" dahinter.
+  // 2: Stack als Verzeichnis: Sidebar = Ordner, Haupt-Pane = `ls`-Listing des
+  // Ordners. Enter oder Klick auf eine Datei = `cd` hinein (Detailansicht,
+  // aktuell ein Platzhalter-Slot), esc oder cd .. zurück. Ein Eintrag, der
+  // in den meta-Werten eines Projekts vorkommt, bekommt "# projektname" dahinter.
+  // `info` liefert Text und ASCII-Grafik für den Slot.
   stack: {
     title: 'stack',
     groups: [
@@ -110,6 +115,111 @@ export const content: Content = {
       { folder: 'infra', files: ['docker', 'ci/cd'] },
       { folder: 'tools', files: ['neovim', 'tmux', 'ghostty', 'yazi'] },
     ],
+    info: {
+      sprachen: { desc: 'Programmiersprachen, mit denen ich täglich arbeite.' },
+      backend: { desc: 'Server, Datenbanken und Anmeldung.' },
+      infra: { desc: 'Bauen, testen und ausliefern.' },
+      tools: { desc: 'Mein Terminal-Alltag.' },
+
+      go: { desc: 'Meine Hauptsprache im Backend. Ganzzahlige Cents, klare Nebenläufigkeit, schnelle Builds.' },
+      java: {
+        desc: 'Aus dem Studium und für Spring-Boot-Dienste.',
+        art: [
+          '  ███  ███  █   █  ███',
+          '   █  █   █ █   █ █   █',
+          '   █  █████ █   █ █████',
+          '█  █  █   █  █ █  █   █',
+          ' ██   █   █   █   █   █',
+        ],
+      },
+      kotlin: {
+        desc: 'Moderne JVM-Sprache, wenn Java zu ausführlich wird.',
+        art: [
+          '█   █  ███  █████ █      ███  █   █',
+          '█  █  █   █   █   █       █   ██  █',
+          '███   █   █   █   █       █   █ █ █',
+          '█  █  █   █   █   █       █   █  ██',
+          '█   █  ███    █   █████  ███  █   █',
+        ],
+      },
+      'c++': { desc: 'Systemnah: Pipes, Prozesse und Speicher selbst verwalten.' },
+
+      gin: { desc: 'Schlanker HTTP-Router für Go, ohne viel Magie.' },
+      'spring boot': {
+        desc: 'Für größere Java-Dienste mit DI, REST und Sicherheit.',
+        art: [
+          ' ████ ████  ████   ███  █   █  ████       ████   ███   ███  █████',
+          '█     █   █ █   █   █   ██  █ █           █   █ █   █ █   █   █',
+          ' ███  ████  ████    █   █ █ █ █  ██       ████  █   █ █   █   █',
+          '    █ █     █  █    █   █  ██ █   █       █   █ █   █ █   █   █',
+          '████  █     █   █  ███  █   █  ████       ████   ███   ███    █',
+        ],
+      },
+      postgresql: { desc: 'Relationale Datenbank mit Transaktionen und sauberem SQL.' },
+      keycloak: {
+        desc: 'Identity-Provider für Login, Rollen und SSO.',
+        art: [
+          '█   █ █████ █   █  ████ █      ███   ███  █   █',
+          '█  █  █      █ █  █     █     █   █ █   █ █  █',
+          '███   ████    █   █     █     █   █ █████ ███',
+          '█  █  █       █   █     █     █   █ █   █ █  █',
+          '█   █ █████   █    ████ █████  ███  █   █ █   █',
+        ],
+      },
+
+      docker: { desc: 'Container für reproduzierbare Builds und Läufe.' },
+      'ci/cd': {
+        desc: 'GitHub Actions: Build, Tests und Deploy automatisch.',
+        art: [
+          ' ████  ███      █  ████ ████',
+          '█       █      █  █     █   █',
+          '█       █     █   █     █   █',
+          '█       █    █    █     █   █',
+          ' ████  ███  █      ████ ████',
+        ],
+      },
+
+      neovim: {
+        desc: 'Mein Editor: LSP, Suche und alles über Tastenkürzel.',
+        art: [
+          '█   █ █████  ███  █   █  ███  █   █',
+          '██  █ █     █   █ █   █   █   ██ ██',
+          '█ █ █ ████  █   █ █   █   █   █ █ █',
+          '█  ██ █     █   █  █ █    █   █   █',
+          '█   █ █████  ███    █    ███  █   █',
+        ],
+      },
+      tmux: {
+        desc: 'Sitzungen und Fenster, die einen SSH-Abbruch überleben.',
+        art: [
+          '█████ █   █ █   █ █   █',
+          '  █   ██ ██ █   █  █ █',
+          '  █   █ █ █ █   █   █',
+          '  █   █   █ █   █  █ █',
+          '  █   █   █  ███  █   █',
+        ],
+      },
+      ghostty: {
+        desc: 'Schnelles Terminal mit GPU-Rendering.',
+        art: [
+          ' ████ █   █  ███   ████ █████ █████ █   █',
+          '█     █   █ █   █ █       █     █    █ █',
+          '█  ██ █████ █   █  ███    █     █     █',
+          '█   █ █   █ █   █     █   █     █     █',
+          ' ████ █   █  ███  ████    █     █     █',
+        ],
+      },
+      yazi: {
+        desc: 'Dateimanager für schnelles Navigieren im Terminal.',
+        art: [
+          '█   █  ███  █████  ███',
+          ' █ █  █   █    █    █',
+          '  █   █████   █     █',
+          '  █   █   █  █     █',
+          '  █   █   █ █████  ███',
+        ],
+      },
+    },
   },
 
   // 3: Readme. Abschnitte frei erweiterbar, jeweils mit paragraphs und/oder list.
@@ -134,3 +244,26 @@ export const content: Content = {
 
 // Links ohne Adresse werden überall ausgeblendet
 export const links = content.profile.links.filter(({ href }) => href);
+
+// Readme-Abschnitte plus der Link-Abschnitt am Ende, so wie sie links in der Liste stehen
+export const readmeHeadings = [...content.readme.sections.map(({ heading }) => heading), content.readme.linksHeading];
+
+// projects whose meta lists this technology, e.g. "go" -> ventorygo, kairo
+export function usedIn(file: string): string[] {
+  return content.projects.items
+    .filter((project) =>
+      Object.values(project.meta).some((value) =>
+        value
+          .toLowerCase()
+          .split(', ')
+          .includes(file),
+      ),
+    )
+    .map((project) => project.id);
+}
+
+// flat list of folders and their files, in tree order; used by App.tsx and Stack.tsx
+export const stackRows: StackRow[] = content.stack.groups.flatMap(({ folder, files }) => [
+  { key: folder, kind: 'folder' as const, folder, files, depth: 0 as const },
+  ...files.map((file) => ({ key: file, kind: 'file' as const, folder, file, depth: 1 as const })),
+]);

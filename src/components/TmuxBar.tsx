@@ -25,7 +25,7 @@ export function TmuxBar({
                 onOpen(id);
               }}
             >
-              {index}:{label}
+              {index + 1}:{label}
             </a>
           ))}
         </nav>

@@ -1,13 +1,13 @@
-import { useRef } from 'react';
-import type { KeyboardEvent } from 'react';
-
 export interface SelectItem {
   key: string;
   name: string;
   detail?: string;
+  // visual indentation of the row, in steps of one list level
+  indent?: number;
+  kind?: 'folder' | 'file';
 }
 
-// lazygit-style list: one line per item, ▸ marks the selection, arrows move it
+// lazygit-style list: one line per item, ▸ marks the selection; j/k and the arrows live in App.tsx
 export function SelectList({
   label,
   items,
@@ -19,33 +19,18 @@ export function SelectList({
   index: number;
   onSelect: (index: number) => void;
 }) {
-  const listRef = useRef<HTMLDivElement>(null);
-  const last = items.length - 1;
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    const next = {
-      ArrowDown: Math.min(index + 1, last),
-      ArrowUp: Math.max(index - 1, 0),
-      Home: 0,
-      End: last,
-    }[event.key];
-    if (next === undefined) return;
-    event.preventDefault();
-    onSelect(next);
-    listRef.current?.querySelectorAll<HTMLButtonElement>('[role="option"]')[next]?.focus();
-  };
-
   return (
-    <div className="select-list" role="listbox" aria-label={label} ref={listRef} onKeyDown={handleKeyDown}>
+    <div className="select-list" role="listbox" aria-label={label}>
       {items.map((item, itemIndex) => (
         <button
           key={item.key}
-          className={`select-row ${itemIndex === index ? 'active' : ''}`}
+          className={`select-row ${item.kind ?? ''} ${itemIndex === index ? 'active' : ''}`}
           role="option"
           aria-selected={itemIndex === index}
           tabIndex={itemIndex === index ? 0 : -1}
           onClick={() => onSelect(itemIndex)}
           type="button"
+          style={{ paddingLeft: `${((item.indent ?? 0) * 12) + 8}px` }}
         >
           <span className="row-marker" aria-hidden="true">
             ▸

@@ -8,7 +8,17 @@ export function initialTheme(): Theme {
 }
 
 export function applyTheme(theme: Theme): void {
-  document.documentElement.dataset.theme = theme;
+  const root = document.documentElement;
+  if (root.dataset.theme === theme) return;
+  const flip = () => {
+    root.dataset.theme = theme;
+  };
+  // crossfade where supported, a plain flip for reduced motion and older browsers
+  if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.startViewTransition(flip);
+  } else {
+    flip();
+  }
   try {
     window.localStorage.setItem(STORAGE_KEY, theme);
   } catch {

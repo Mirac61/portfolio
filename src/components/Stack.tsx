@@ -1,25 +1,15 @@
 import { Pane } from './Pane';
 import { SelectList } from './SelectList';
-import { content } from '../content';
+import { content, usedIn } from '../content';
 
-const { stack, projects } = content;
+const { stack } = content;
 
-const fileCount = stack.groups.reduce((sum, group) => sum + group.files.length, 0);
-
-// projects whose meta lists this technology, e.g. "go" -> ventorygo, kairo
-function usedIn(file: string): string[] {
-  return projects.items
-    .filter((project) =>
-      Object.values(project.meta).some((value) =>
-        value
-          .toLowerCase()
-          .split(', ')
-          .includes(file),
-      ),
-    )
-    .map((project) => project.id);
+export interface StackGroup {
+  folder: string;
+  files: string[];
 }
 
+// sidebar = the directories; the cursor lives here on level 0
 export function StackSide({
   focused,
   onActivate,
@@ -31,61 +21,102 @@ export function StackSide({
   index: number;
   onSelect: (index: number) => void;
 }) {
+  const items = stack.groups.map((group) => ({
+    key: group.folder,
+    name: `${group.folder}/`,
+    detail: String(group.files.length),
+    kind: 'folder' as const,
+  }));
+
   return (
-    <Pane
-      id="stack"
-      title={stack.title}
-      focused={focused}
-      onActivate={onActivate}
-    >
-      <SelectList
-        label="Stack-Verzeichnisse"
-        index={index}
-        onSelect={onSelect}
-        items={stack.groups.map(({ folder }) => ({
-          key: folder,
-          name: `${folder}/`,
-        }))}
-      />
+    <Pane id="stack" title={stack.title} focused={focused} onActivate={onActivate}>
+      <SelectList label="Stack-Verzeichnisse" index={index} onSelect={onSelect} items={items} />
     </Pane>
   );
 }
 
-export function StackMain({ index }: { index: number }) {
-  return (
-    <div className="tree">
-        <div className="tree-root" aria-hidden="true">
-          .
+// main pane: level 0/1 = ls listing of the cursor directory, level 2 = detail of the cursor file
+export function StackMain({
+  group,
+  level,
+  fileIndex,
+  onOpenFile,
+  onBack,
+}: {
+  group: StackGroup;
+  level: number;
+  fileIndex: number;
+  onOpenFile: (index: number) => void;
+  onBack: () => void;
+}) {
+  const file = group.files[fileIndex];
+
+  if (level === 2) {
+    const info = stack.info[file];
+    const used = usedIn(file);
+    return (
+      <div className="stack-cd">
+        <div className="cd-head">
+          <span className="cd-crumb">
+            <span className="cd-prompt">$</span> cd {file} · ~/stack/{group.folder}/{file}
+          </span>
+          <button className="cd-back" type="button" onClick={onBack}>
+            cd ..
+          </button>
         </div>
-        {stack.groups.map(({ folder, files }, groupIndex) => {
-          const lastGroup = groupIndex === stack.groups.length - 1;
+        <h3 className="stack-name">{file}</h3>
+        {/* slot: hier entsteht später miracs eigene detail-ansicht pro eintrag */}
+        <div className="stack-slot">
+          <span className="stack-slot-label">detail-ansicht</span>
+          {info?.art ? (
+            <pre className="stack-art">
+              <code>{info.art.join('\n')}</code>
+            </pre>
+          ) : null}
+          {info ? <p className="stack-desc">{info.desc}</p> : null}
+          {used.length > 0 && (
+            <p className="stack-used">
+              <span className="stack-used-label">genutzt in</span> {used.join(', ')}
+            </p>
+          )}
+        </div>
+        <p className="cd-hint">←, esc oder cd .. eine ebene raus · j/k blättert durch die dateien</p>
+      </div>
+    );
+  }
+
+  const hint =
+    level === 0
+      ? 'j/k = verzeichnisse · → oder enter = ordner öffnen · klick auf eine datei = detail'
+      : 'j/k = dateien · → oder enter = cd · ← zurück zu den verzeichnissen';
+
+  return (
+    <div className="stack-ls">
+      <p className="cd-prompt-line">
+        <span className="cd-prompt">$ </span>ls ~/stack/{group.folder}
+      </p>
+      <p className="ls-comment"># {stack.info[group.folder]?.desc}</p>
+      <div className="ls-list" role="listbox" aria-label={`Dateien in ${group.folder}/`}>
+        {group.files.map((name, index) => {
+          const projects = usedIn(name);
+          const on = level === 1 && index === fileIndex;
           return (
-            <ul key={folder} className={`tree-group ${groupIndex === index ? 'selected' : ''}`} aria-label={folder}>
-              <li>
-                <span className="tree-deco" aria-hidden="true">
-                  {lastGroup ? '└── ' : '├── '}
-                </span>
-                <span className="tree-folder">{folder}</span>
-              </li>
-              {files.map((file, fileIndex) => {
-                const projectsUsing = usedIn(file);
-                return (
-                  <li key={file}>
-                    <span className="tree-deco" aria-hidden="true">
-                      {lastGroup ? '    ' : '│   '}
-                      {fileIndex === files.length - 1 ? '└── ' : '├── '}
-                    </span>
-                    <span className="tree-file">{file}</span>
-                    {projectsUsing.length > 0 && <span className="tree-used">{`  # ${projectsUsing.join(', ')}`}</span>}
-                  </li>
-                );
-              })}
-            </ul>
+            <button
+              key={name}
+              type="button"
+              role="option"
+              aria-selected={on}
+              className={`ls-row ${on ? 'on' : ''}`}
+              onClick={() => onOpenFile(index)}
+            >
+              <span className="ls-name">{name}</span>
+              <span className="ls-desc">{stack.info[name]?.desc}</span>
+              <span className="ls-tags">{projects.length > 0 ? `# ${projects.join(', ')}` : '↵'}</span>
+            </button>
           );
         })}
-        <div className="tree-summary">
-          {stack.groups.length} verzeichnisse, {fileCount} dateien
-        </div>
+      </div>
+      <p className="cd-hint">{hint}</p>
     </div>
   );
 }
