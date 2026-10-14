@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react';
+import { content } from '../content';
 
-const tabs = [
-  { id: 'profil', label: '0:profil' },
-  { id: 'projekte', label: '1:projekte' },
-  { id: 'stack', label: '2:stack' },
-  { id: 'readme', label: '3:readme' },
-] as const;
+const { statusBar } = content;
 
 export function TmuxBar() {
-  const [active, setActive] = useState('profil');
+  const [active, setActive] = useState<string>(statusBar.tabs[0].id);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -22,7 +18,7 @@ export function TmuxBar() {
       { rootMargin: '-40% 0px -55% 0px', threshold: 0 },
     );
 
-    tabs.forEach(({ id }) => {
+    statusBar.tabs.forEach(({ id }) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
@@ -41,9 +37,9 @@ export function TmuxBar() {
   return (
     <header className="tmux-bar" role="banner">
       <div className="tmux-left">
-        <span className="session-block">mirac</span>
+        <span className="session-block">{statusBar.session}</span>
         <nav className="tmux-tabs" aria-label="Hauptnavigation">
-          {tabs.map(({ id, label }) => (
+          {statusBar.tabs.map(({ id, label }, index) => (
             <button
               key={id}
               className={`tmux-tab ${active === id ? 'active' : ''}`}
@@ -51,16 +47,16 @@ export function TmuxBar() {
               aria-current={active === id ? 'page' : undefined}
               type="button"
             >
-              {label}{active === id ? '*' : ''}
+              {index}:{label}{active === id ? '*' : ''}
             </button>
           ))}
         </nav>
       </div>
       <div className="tmux-right">
         <span className="status-hiring">
-          <span className="status-dot" aria-hidden="true" /> werkstudent: offen
+          <span className="status-dot" aria-hidden="true" /> {statusBar.hiring}
         </span>
-        <span className="status-praxis">praxissemester: SS 2027</span>
+        <span className="status-praxis">{statusBar.internship}</span>
       </div>
     </header>
   );

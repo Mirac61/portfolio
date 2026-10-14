@@ -1,13 +1,12 @@
-interface StatusLineProps {
-  theme: 'dark' | 'light';
-  onToggle: () => void;
-}
+import { content } from '../content';
 
-export function StatusLine({ theme, onToggle }: StatusLineProps) {
+const { footer } = content;
+
+export function StatusLine() {
   return (
     <footer className="statusline" role="contentinfo">
       <div className="status-left">
-        <span className="status-mode">NORMAL</span>
+        <span className="status-mode">{footer.mode}</span>
         <span className="status-branch">
           <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12">
             <path
@@ -17,22 +16,12 @@ export function StatusLine({ theme, onToggle }: StatusLineProps) {
               strokeWidth="1.5"
             />
           </svg>
-          main
+          {footer.branch}
         </span>
-        <span className="status-path">~/mirac/portfolio</span>
+        <span className="status-path">{footer.path}</span>
       </div>
       <div className="status-right">
-        <button
-          className="theme-toggle"
-          onClick={onToggle}
-          aria-label={`Aktuelles Design: ${theme}. Zum ${theme === 'dark' ? 'hellen' : 'dunklen'} Modus wechseln.`}
-          type="button"
-        >
-          <span aria-hidden="true">[</span>
-          <span className="theme-label">{theme === 'dark' ? 'light' : 'dark'}</span>
-          <span aria-hidden="true">]</span>
-        </button>
-        <span className="status-meta">utf-8 · de · © 2026 Mirac Sancak</span>
+        <span className="status-meta">{footer.meta}</span>
       </div>
     </footer>
   );
