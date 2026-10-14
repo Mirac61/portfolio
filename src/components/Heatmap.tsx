@@ -24,7 +24,7 @@ export function Heatmap() {
           <span key={week}>{labelled(week) ? MONTHS[monthOf(week)] : ''}</span>
         ))}
       </div>
-      <div className="heatmap-grid" role="img" aria-label={`${total} Commits in den letzten ${weeks.length} Wochen`}>
+      <div className="heatmap-grid" role="img" aria-label={`${total} Beiträge auf GitHub in den letzten ${weeks.length} Wochen`}>
         {weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="heatmap-week">
             {week.map((count, day) => (
@@ -34,7 +34,7 @@ export function Heatmap() {
         ))}
       </div>
       <figcaption>
-        {total} commits in {weeks.length} wochen
+        {total} beiträge auf github in {weeks.length} wochen
       </figcaption>
     </figure>
   );

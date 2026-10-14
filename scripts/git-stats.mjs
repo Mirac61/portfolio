@@ -1,14 +1,13 @@
-// Reads the local repos and writes src/data/git.json: commit log per project,
-// lines of code per language and daily commit activity. Run it again to refresh:
+// Writes src/data/git.json: lines of code per language over the local repos and
+// the GitHub contribution calendar, the same numbers as the graph on the profile.
+// Needs a logged-in gh CLI. Run it again to refresh:
 //   node scripts/git-stats.mjs [repos-dir]
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { basename, join } from 'node:path';
-import { content } from '../src/content.ts';
+import { join } from 'node:path';
 
 const reposDir = process.argv[2] ?? join(homedir(), 'code/personal');
-const OWN_AUTHOR = /mirac|sancak/i;
 const ACTIVITY_WEEKS = 26;
 const LANGUAGES = {
   go: 'go',
@@ -22,8 +21,6 @@ const LANGUAGES = {
   cc: 'c++',
   sql: 'sql',
 };
-// only product commits in the visible log, no docs/chore/agent bookkeeping
-const SHOWN_COMMIT = /^(feat|fix|refactor|perf)(\([^)]*\))?!?:/i;
 const SKIP_PATH = /(^|\/)(node_modules|vendor|dist|build|generated)\/|\.min\.|_gen\.go$|\.pb\.go$/;
 
 const git = (repo, ...args) => execFileSync('git', ['-C', repo, ...args], { encoding: 'utf8', maxBuffer: 1 << 26 });
@@ -51,54 +48,33 @@ for (const repo of repos) {
   }
 }
 
-// own commits per day for the last ACTIVITY_WEEKS weeks, ending on today's week
+// contributions per day for the last ACTIVITY_WEEKS weeks, ending on today's week.
+// Same query as lifelog: the calendar counts commits, PRs, issues and reviews,
+// private ones included, exactly like the graph on the GitHub profile.
 const today = new Date();
 const start = new Date(today);
 start.setUTCDate(start.getUTCDate() - start.getUTCDay() - (ACTIVITY_WEEKS - 1) * 7);
 const startDay = start.toISOString().slice(0, 10);
+const query = `query($from: DateTime!, $to: DateTime!) {
+  viewer {
+    contributionsCollection(from: $from, to: $to) {
+      contributionCalendar { weeks { contributionDays { date contributionCount } } }
+    }
+  }
+}`;
+const response = JSON.parse(
+  execFileSync(
+    'gh',
+    ['api', 'graphql', '-f', `query=${query}`, '-f', `from=${startDay}T00:00:00Z`, '-f', `to=${today.toISOString()}`],
+    { encoding: 'utf8' },
+  ),
+);
 const days = new Array(ACTIVITY_WEEKS * 7).fill(0);
-const seen = new Set();
-for (const repo of repos) {
-  for (const line of git(repo, 'log', '--all', `--since=${startDay}`, '--format=%H\t%an\t%ae\t%as').split('\n')) {
-    const [hash, name, email, date] = line.split('\t');
-    if (!hash || seen.has(hash) || !OWN_AUTHOR.test(`${name} ${email}`)) continue;
-    seen.add(hash);
+for (const week of response.data.viewer.contributionsCollection.contributionCalendar.weeks) {
+  for (const { date, contributionCount } of week.contributionDays) {
     const index = Math.round((Date.parse(date) - Date.parse(startDay)) / 86_400_000);
-    if (index >= 0 && index < days.length) days[index] += 1;
+    if (index >= 0 && index < days.length) days[index] = contributionCount;
   }
-}
-
-const projects = {};
-// each project's repo is the folder named like its id, ignoring case
-for (const { id } of content.projects.items) {
-  const repo = repos.find((path) => basename(path).toLowerCase() === id);
-  if (!repo) {
-    console.warn(`no repo folder for ${id} in ${reposDir}, skipped`);
-    continue;
-  }
-  const dates = git(repo, 'log', '--format=%as').trim().split('\n');
-  const others = new Set(
-    git(repo, 'log', '--format=%an\t%ae')
-      .trim()
-      .split('\n')
-      .filter((author) => !OWN_AUTHOR.test(author))
-      .map((author) => author.split('\t')[1]),
-  );
-  projects[id] = {
-    commits: dates.length,
-    first: dates.at(-1),
-    last: dates[0],
-    contributors: others.size + 1,
-    log: git(repo, 'log', '--no-merges', '-300', '--format=%h\t%as\t%s')
-      .trim()
-      .split('\n')
-      .map((line) => {
-        const [hash, date, subject] = line.split('\t');
-        return { hash, date, subject };
-      })
-      .filter(({ subject }) => SHOWN_COMMIT.test(subject))
-      .slice(0, 6),
-  };
 }
 
 const out = {
@@ -108,9 +84,9 @@ const out = {
     .map(([name, { files, lines, repos: used }]) => ({ name, files, lines, repos: used.size }))
     .sort((a, b) => b.lines - a.lines),
   activity: { start: startDay, days },
-  projects,
 };
 
 mkdirSync('src/data', { recursive: true });
 writeFileSync('src/data/git.json', `${JSON.stringify(out, null, 2)}\n`);
-console.log(`wrote src/data/git.json from ${repos.length} repos, ${seen.size} own commits in ${ACTIVITY_WEEKS} weeks`);
+const total = days.reduce((sum, count) => sum + count, 0);
+console.log(`wrote src/data/git.json from ${repos.length} repos, ${total} contributions in ${ACTIVITY_WEEKS} weeks`);
