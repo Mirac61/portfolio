@@ -2,6 +2,8 @@ import { TmuxBar } from './components/TmuxBar';
 import { StatusLine } from './components/StatusLine';
 import { ProfilePane } from './components/ProfilePane';
 import { ProjectExplorer } from './components/ProjectExplorer';
+import { StackPane } from './components/StackPane';
+import { ReadmePane } from './components/ReadmePane';
 
 function App() {
   return (
@@ -10,6 +12,10 @@ function App() {
       <main className="container">
         <ProfilePane />
         <ProjectExplorer />
+        <div className="bottom-row">
+          <StackPane />
+          <ReadmePane />
+        </div>
       </main>
       <StatusLine />
     </>
