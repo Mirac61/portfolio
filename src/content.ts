@@ -51,6 +51,7 @@ export const content: Content = {
           datenbank: 'PostgreSQL',
           pdf: 'Maroto v2',
           infra: 'Docker, GitHub Actions',
+          team: '2 Personen',
         },
         repoUrl: 'https://github.com/Mirac61/VentoryGo',
         media: { src: '/media/ventorygo.webp', label: 'mockup' },
@@ -126,8 +127,7 @@ export const content: Content = {
         list: ['eine Werkstudentenstelle im Backend', 'ein Praxissemester ab SS 2027'],
       },
     ],
-    // diese beiden Abschnitte füllen sich automatisch aus git-Daten und profile.links
-    recentHeading: 'zuletzt',
+    // füllt sich automatisch aus profile.links
     linksHeading: 'links',
   },
 };

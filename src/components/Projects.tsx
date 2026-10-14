@@ -2,7 +2,6 @@ import { Pane } from './Pane';
 import { SelectList } from './SelectList';
 import { content } from '../content';
 import type { Project } from '../types';
-import git from '../data/git.json';
 
 const { projects } = content;
 
@@ -57,10 +56,7 @@ function Visual({ project }: { project: Project }) {
   );
 }
 
-const monthYear = (date: string) => `${date.slice(5, 7)}/${date.slice(0, 4)}`;
-
 export function ProjectMain({ project }: { project: Project }) {
-  const history = git.projects[project.id as keyof typeof git.projects];
   return (
     <article className="project-main">
       <div className="project-text">
@@ -74,37 +70,7 @@ export function ProjectMain({ project }: { project: Project }) {
               <dd>{value}</dd>
             </div>
           ))}
-          {history && (
-            <>
-              <div className="kv-row">
-                <dt>commits</dt>
-                <dd>
-                  {history.commits}, {monthYear(history.first)} bis {monthYear(history.last)}
-                </dd>
-              </div>
-              {history.contributors > 1 && (
-                <div className="kv-row">
-                  <dt>team</dt>
-                  <dd>{history.contributors} personen</dd>
-                </div>
-              )}
-            </>
-          )}
         </dl>
-        {history && (
-          <figure className="git-log">
-            <figcaption className="block-label"># git log</figcaption>
-            <ol>
-              {history.log.map(({ hash, date, subject }) => (
-                <li key={hash}>
-                  <span className="log-hash">{hash}</span>
-                  <span className="log-date">{date}</span>
-                  <span className="log-subject">{subject}</span>
-                </li>
-              ))}
-            </ol>
-          </figure>
-        )}
         {project.repoUrl && (
           <div className="actions">
             <a className="btn btn-solid" href={project.repoUrl} target="_blank" rel="noopener noreferrer">

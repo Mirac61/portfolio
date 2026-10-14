@@ -1,16 +1,10 @@
 import { Pane } from './Pane';
 import { content, links } from '../content';
-import git from '../data/git.json';
 
 const { readme } = content;
 
-// newest product commit of each project, most recent first
-const recent = Object.entries(git.projects)
-  .map(([project, { log }]) => ({ project, ...log[0] }))
-  .sort((a, b) => b.date.localeCompare(a.date));
-
 // the side pane lists these headings, the text itself only lives in the main view
-const headings = [...readme.sections.map(({ heading }) => heading), readme.recentHeading, readme.linksHeading];
+const headings = [...readme.sections.map(({ heading }) => heading), readme.linksHeading];
 const sectionId = (index: number) => `readme-${index}`;
 
 export function ReadmeSide({ focused, onActivate }: { focused: boolean; onActivate: () => void }) {
@@ -73,18 +67,6 @@ export function ReadmeMain() {
       ))}
       <section id={sectionId(last)}>
         <Heading index={last} />
-        <ol className="recent">
-          {recent.map(({ project, hash, date, subject }) => (
-            <li key={hash}>
-              <span className="log-date">{date}</span>
-              <span className="recent-project">{project}</span>
-              <span className="log-subject">{subject}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
-      <section id={sectionId(last + 1)}>
-        <Heading index={last + 1} />
         <ul className="readme-links">
           {links.map(({ label, href }) => (
             <li key={label}>

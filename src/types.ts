@@ -58,7 +58,6 @@ export interface Content {
   readme: {
     title: string;
     sections: ReadmeSection[];
-    recentHeading: string;
     linksHeading: string;
   };
 }
