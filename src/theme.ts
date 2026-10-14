@@ -1,10 +1,9 @@
+import { useEffect, useState } from 'react';
+
 export type Theme = 'dark' | 'light';
 
-const STORAGE_KEY = 'portfolio-theme';
-
-// the inline script in index.html sets data-theme before first paint
-export function initialTheme(): Theme {
-  return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+function systemTheme(): Theme {
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
 }
 
 export function applyTheme(theme: Theme): void {
@@ -19,13 +18,23 @@ export function applyTheme(theme: Theme): void {
   } else {
     flip();
   }
-  try {
-    window.localStorage.setItem(STORAGE_KEY, theme);
-  } catch {
-    // storage blocked: the choice just lasts for this visit
-  }
 }
 
-export function nextTheme(current: Theme): Theme {
-  return current === 'dark' ? 'light' : 'dark';
+// initial theme before React hydrates, matching the inline script in index.html
+export function initialTheme(): Theme {
+  return systemTheme();
+}
+
+// follow the OS colour scheme dynamically
+export function useSystemTheme(): Theme {
+  const [theme, setTheme] = useState<Theme>(systemTheme);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(prefers-color-scheme: light)');
+    const onChange = (event: MediaQueryListEvent) => setTheme(event.matches ? 'light' : 'dark');
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
+  }, []);
+
+  return theme;
 }

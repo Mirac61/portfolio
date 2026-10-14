@@ -1,5 +1,4 @@
 import { content } from '../content';
-import type { Theme } from '../theme';
 
 const { footer } = content;
 
@@ -7,10 +6,9 @@ const { footer } = content;
 const HINTS = [
   { key: '1-4', label: 'fenster' },
   { key: 'j/k ↑↓', label: 'navigieren' },
-  { key: 't', label: 'theme' },
 ];
 
-export function StatusLine({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
+export function StatusLine() {
   return (
     <footer className="statusline">
       <div className="status-left">
@@ -35,14 +33,6 @@ export function StatusLine({ theme, onToggle }: { theme: Theme; onToggle: () => 
         ))}
       </div>
       <div className="status-right">
-        <button
-          className="theme-toggle"
-          onClick={onToggle}
-          type="button"
-          aria-label={theme === 'dark' ? 'Helles Design einschalten' : 'Dunkles Design einschalten'}
-        >
-          {theme === 'dark' ? 'light' : 'dark'}
-        </button>
         <span className="status-meta">{footer.meta}</span>
       </div>
     </footer>
