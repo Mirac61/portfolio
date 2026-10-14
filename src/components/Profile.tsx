@@ -1,6 +1,5 @@
 import { Pane } from './Pane';
 import { AsciiBanner } from './AsciiBanner';
-import { Heatmap } from './Heatmap';
 import { content, links } from '../content';
 
 const { profile } = content;
@@ -50,19 +49,14 @@ export function ProfileMain() {
           </a>
         ))}
       </div>
-      <div className="profile-stats">
-        <div className="neofetch">
-          <dl>
-            {profile.facts.map(({ key, value }) => (
-              <div className="nf-row" key={key}>
-                <dt>{key}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-        <Heatmap />
-      </div>
+      <dl className="neofetch">
+        {profile.facts.map(({ key, value }) => (
+          <div className="nf-row" key={key}>
+            <dt>{key}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }

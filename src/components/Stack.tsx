@@ -1,7 +1,6 @@
 import { Pane } from './Pane';
 import { SelectList } from './SelectList';
 import { content } from '../content';
-import git from '../data/git.json';
 
 const { stack, projects } = content;
 
@@ -52,64 +51,9 @@ export function StackSide({
   );
 }
 
-const numbers = new Intl.NumberFormat('de-DE');
-const totals = git.languages.reduce(
-  (sum, language) => ({ files: sum.files + language.files, lines: sum.lines + language.lines }),
-  { files: 0, lines: 0 },
-);
-
-// lines as a block bar, the largest language fills BAR_WIDTH cells
-const BAR_WIDTH = 12;
-const maxLines = Math.max(...git.languages.map(({ lines }) => lines));
-const bar = (lines: number) => '█'.repeat(Math.max(1, Math.round((lines / maxLines) * BAR_WIDTH)));
-
-// measured by scripts/git-stats.mjs over all local repos, like tokei
-function LinesOfCode({ highlight }: { highlight: string[] }) {
-  return (
-    <figure className="loc">
-      <figcaption className="block-label"># zeilen code in {git.repoCount} repos</figcaption>
-      <table>
-        <thead>
-          <tr>
-            <th>sprache</th>
-            <th>dateien</th>
-            <th>zeilen</th>
-            <th>repos</th>
-            <th aria-hidden="true" />
-          </tr>
-        </thead>
-        <tbody>
-          {git.languages.map((language) => (
-            <tr key={language.name} className={highlight.includes(language.name) ? 'highlight' : ''}>
-              <td>{language.name}</td>
-              <td>{numbers.format(language.files)}</td>
-              <td>{numbers.format(language.lines)}</td>
-              <td>{language.repos}</td>
-              <td className="loc-bar" aria-hidden="true">
-                {bar(language.lines)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td>gesamt</td>
-            <td>{numbers.format(totals.files)}</td>
-            <td>{numbers.format(totals.lines)}</td>
-            <td />
-            <td />
-          </tr>
-        </tfoot>
-      </table>
-      <p className="loc-note">nicht-leere zeilen, stand {git.generated}</p>
-    </figure>
-  );
-}
-
 export function StackMain({ index }: { index: number }) {
   return (
-    <div className="stack-main">
-      <div className="tree">
+    <div className="tree">
         <div className="tree-root" aria-hidden="true">
           .
         </div>
@@ -142,8 +86,6 @@ export function StackMain({ index }: { index: number }) {
         <div className="tree-summary">
           {stack.groups.length} verzeichnisse, {fileCount} dateien
         </div>
-      </div>
-      <LinesOfCode highlight={stack.groups[index].files} />
     </div>
   );
 }
