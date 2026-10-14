@@ -83,3 +83,17 @@ export function ProjectMain({ project }: { project: Project }) {
     </article>
   );
 }
+
+// mobile: all projects stacked vertically so the user can scroll through them
+export function AllProjectsMain() {
+  return (
+    <div className="all-projects">
+      {projects.items.map((project, index) => (
+        <div key={project.id}>
+          <ProjectMain project={project} />
+          {index < projects.items.length - 1 && <hr className="project-divider" />}
+        </div>
+      ))}
+    </div>
+  );
+}

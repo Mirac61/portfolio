@@ -1046,33 +1046,42 @@ button {
   color: var(--text-dim);
 }
 
-.theme-toggle {
-  height: 28px;
-  padding: 0 8px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text);
-  white-space: pre;
-  cursor: pointer;
-  transition: background-color var(--dur) ease;
-}
-
-.theme-toggle:hover {
-  background: var(--bg-tab-hover);
+/* ===================================================================
+   Mobile navigation: fixed bottom bar, hidden on desktop
+   =================================================================== */
+.mobile-nav {
+  display: none;
 }
 
 /* ===================================================================
-   Narrow or short screens: one tmux window at a time, page scrolls
+   Narrow or short screens: no split view, the tabs navigate, page scrolls
    =================================================================== */
 @media (max-width: 899px), (max-height: 559px) {
-  .workspace {
-    grid-template-columns: minmax(0, 1fr);
-    /* short windows: the empty side row must not soak up the spare height */
-    align-content: start;
-    row-gap: 0;
+  /* never lock the viewport to exactly 100vh or hide overflow: the page must
+     grow with its content and scroll like a normal website */
+  html,
+  body,
+  #root {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
 
+  body {
+    overflow-y: auto;
+  }
+
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    row-gap: 0;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  /* only the active window keeps its side list; the other three boxes and the
+     static profil/readme panes are hidden so the page stays compact */
   .side {
     gap: 0;
     overflow: visible;
@@ -1082,16 +1091,87 @@ button {
     margin-bottom: 24px;
   }
 
-  /* only the list of the active window; profil and readme live in main */
   .side .pane:not(.focused),
   .side #profil,
+  .side #projekte,
   .side #readme {
     display: none;
   }
 
-  .main-scroll {
+  /* the main pane and its scroll area grow with content, no fixed height */
+  .pane.main-pane {
+    height: auto;
+    min-height: 0;
     overflow: visible;
-    padding: 32px 16px 24px;
+  }
+
+  .main-scroll {
+    flex: none;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 32px 16px 72px;
+  }
+
+  /* the info grid stacks in a single column, every entry reads left-aligned */
+  .prof-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .prof-fact:nth-child(even) {
+    text-align: left;
+  }
+
+  /* top bar and desktop statusline are hidden; fixed bottom bar is the nav */
+  .tmux-bar,
+  .statusline {
+    display: none;
+  }
+
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 56px;
+    background: var(--bg-bar);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .mobile-nav-tab {
+    flex: 1;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .mobile-nav-tab.active {
+    color: var(--text);
+    background: var(--bg-tab-active);
+    box-shadow: inset 0 2px 0 0 var(--accent);
+  }
+
+  /* mobile projects: all cards stacked vertically so the user scrolls through */
+  .all-projects {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .project-divider {
+    width: 100%;
+    margin: 0;
+    border: 0;
+    border-top: 1px solid var(--border-subtle);
   }
 }
 

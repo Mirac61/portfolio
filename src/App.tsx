@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { TmuxBar } from './components/TmuxBar';
 import { StatusLine } from './components/StatusLine';
+import { MobileNav } from './components/MobileNav';
 import { ProfileMain, ProfileSide } from './components/Profile';
-import { ProjectMain, ProjectsSide } from './components/Projects';
+import { ProjectMain, AllProjectsMain, ProjectsSide } from './components/Projects';
 import { StackMain, StackSide } from './components/Stack';
 import { ReadmeMain, ReadmeSide } from './components/Readme';
 import { Pane } from './components/Pane';
-import { applyTheme, initialTheme, nextTheme, type Theme } from './theme';
+import { useMobile } from './hooks/useMobile';
+import { applyTheme, useSystemTheme } from './theme';
 import { content, readmeHeadings } from './content';
 
 const { profile, projects, stack, readme } = content;
@@ -37,8 +39,9 @@ function windowFromHash(): string {
 }
 
 function App() {
-  const [theme, setTheme] = useState<Theme>(initialTheme);
   const [active, setActive] = useState(windowFromHash);
+  const theme = useSystemTheme();
+  const isMobile = useMobile();
   // the selected row per window, kept while another window is open;
   // for the stack window this is the directory cursor (level 0)
   const [selection, setSelection] = useState<Record<string, number>>({ profil: 0, projekte: 0, stack: 0, readme: 0 });
@@ -169,8 +172,6 @@ function App() {
         // esc/←/h: one level back out
         event.preventDefault();
         setStackLevel((level) => Math.max(0, level - 1));
-      } else if (event.key === 't') {
-        setTheme(nextTheme);
       } else if (event.key in NAV_KEYS) {
         event.preventDefault();
         document.documentElement.dataset.nav = 'keys';
@@ -218,7 +219,10 @@ function App() {
   );
   const main = {
     profil: { path: '~/mirac', view: <ProfileMain /> },
-    projekte: { path: `~/projects/${project.id}`, view: <ProjectMain project={project} /> },
+    projekte: {
+      path: isMobile ? '~/projects' : `~/projects/${project.id}`,
+      view: isMobile ? <AllProjectsMain /> : <ProjectMain project={project} />,
+    },
     stack: {
       path: stackPath,
       view: (
@@ -273,7 +277,8 @@ function App() {
           </div>
         </Pane>
       </main>
-      <StatusLine theme={theme} onToggle={() => setTheme(nextTheme(theme))} />
+      <StatusLine />
+      <MobileNav tabs={tabs} activeTab={active} onOpen={openWindow} />
     </>
   );
 }
