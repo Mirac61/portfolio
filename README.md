@@ -25,7 +25,9 @@ Alle Texte stehen in **`src/content.ts`**. Für Inhaltsänderungen muss keine an
 | Überschrift, Fakten, Status „werkstudent: offen“ | `profile` |
 | Mail, GitHub, LinkedIn | `profile.links` |
 | Projekte | `projects.items` |
-| Technologien | `stack.groups` |
+| Technologien (Verzeichnis-Listing, Texte, ASCII-Grafiken) | `stack` |
+
+Alle Inhalte stehen in `src/content.ts`. Für Stack-ASCII-Art und offene Bilder siehe auch `docs/ascii-art.md`.
 | Texte im Readme-Fenster | `readme.sections` |
 | Statuszeile unten | `footer` |
 
@@ -56,8 +58,8 @@ Für einen Abgleich nach Designänderungen erzeugt `node scripts/shots.mjs shots
 
 | Taste | Aktion |
 |---|---|
-| `0` bis `3` | Fenster wechseln |
-| `j` / `k` | Auswahl in Projekte und Stack |
+| `1` bis `4` | Fenster wechseln |
+| `j` / `k` oder `↓` / `↑` | durch alle Boxen navigieren, am Ende einer Box geht es in der nächsten weiter |
 | `t` | helles oder dunkles Design |
 
 ## Aufbau
