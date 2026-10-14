@@ -2,25 +2,36 @@ import type { ReactNode } from 'react';
 
 interface PaneProps {
   id?: string;
-  number: number;
   title: string;
-  count?: number;
   focused?: boolean;
+  onActivate?: () => void;
   children: ReactNode;
   className?: string;
 }
 
-export function Pane({ id, number, title, count, focused = false, children, className = '' }: PaneProps) {
+export function Pane({
+  id,
+  title,
+  focused = false,
+  onActivate,
+  children,
+  className = '',
+}: PaneProps) {
   return (
     <section
       id={id}
       className={`pane ${focused ? 'focused' : ''} ${className}`.trim()}
-      aria-labelledby={`pane-title-${number}`}
+      aria-label={title}
+      onClick={onActivate}
     >
-      <h2 className="pane-title" id={`pane-title-${number}`}>
-        <span className="pane-number" aria-hidden="true">[{number}]</span>{' '}
-        {title}
-        {count !== undefined && <span className="pane-count" aria-hidden="true"> ({count})</span>}
+      <h2 className="pane-title">
+        {onActivate ? (
+          <button type="button" onClick={onActivate} aria-current={focused || undefined}>
+            {title}
+          </button>
+        ) : (
+          title
+        )}
       </h2>
       {children}
     </section>

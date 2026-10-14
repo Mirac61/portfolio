@@ -1,8 +1,8 @@
-export interface ProjectVisual {
-  type: 'screenshot' | 'terminal';
-  src: string;
-  filename: string;
-  alt: string;
+export interface ProjectMedia {
+  href: string;
+  label: string;
+  // first frame for videos, chosen so it already shows output
+  poster?: string;
 }
 
 export interface Project {
@@ -15,9 +15,8 @@ export interface Project {
   status: string;
   desc: string;
   meta: Record<string, string>;
-  tech: string[];
   repoUrl: string;
-  visual: ProjectVisual;
+  media: ProjectMedia;
 }
 
 export interface StatusTab {
@@ -35,10 +34,9 @@ export interface ProfileFact {
   value: string;
 }
 
-export interface StackTreeItem {
-  prefix: string;
-  label: string;
-  folder: boolean;
+export interface StackGroup {
+  folder: string;
+  files: string[];
 }
 
 export interface ReadmeSection {
@@ -67,24 +65,23 @@ export interface Content {
     mode: string;
     branch: string;
     path: string;
+    hints: { key: string; label: string }[];
     meta: string;
   };
   profile: {
-    host: 'mirac@esslingen',
+    host: string;
+    headline: string;
     lines: ProfileFact[];
     links: Record<string, ProfileLink>;
   };
   projects: {
     title: string;
-    listHint: string;
-    positionLabel: string;
     repoLabel: string;
-    keybindingHint: string;
     items: Project[];
   };
   stack: {
     title: string;
-    tree: StackTreeItem[];
+    groups: StackGroup[];
   };
   readme: {
     title: string;
@@ -115,11 +112,17 @@ export const content: Content = {
     mode: 'NORMAL',
     branch: 'main',
     path: '~/mirac/portfolio',
+    hints: [
+      { key: '0-3', label: 'fenster' },
+      { key: 'j/k', label: 'auswahl' },
+      { key: 't', label: 'theme' },
+    ],
     meta: 'utf-8 · de · © 2026 Mirac Sancak',
   },
 
   profile: {
     host: 'mirac@esslingen',
+    headline: 'Ich baue Backends mit Go und Java.',
     lines: [
       { key: 'name', value: 'Mirac Sancak' },
       { key: 'studium', value: 'Softwaretechnik, HS Esslingen' },
@@ -145,10 +148,7 @@ export const content: Content = {
 
   projects: {
     title: 'projekte',
-    listHint: 'klicken oder ↑/↓ zum auswählen',
-    positionLabel: '{current}/{total}',
     repoLabel: 'repo ansehen',
-    keybindingHint: '↑/↓ auswählen · enter repo öffnen',
     items: [
       {
         id: 'ventorygo',
@@ -158,20 +158,16 @@ export const content: Content = {
         lang: 'go',
         path: '~/projects/ventorygo',
         status: 'TODO: Projektstatus eintragen',
-        desc: 'Backend für Rechnungen in Go mit Gin und PostgreSQL. Erzeugt PDF-Rechnungen mit Maroto v2 und verwendet Session-Auth mit Argon2id sowie HttpOnly-Cookies.',
+        desc: 'Rechnungen für Freelancer und kleine Firmen. Das Go-Backend rechnet mit ganzzahligen Cents, vergibt Rechnungsnummern lückenlos pro Nutzer und Jahr, trennt Mandanten strikt und erzeugt PDFs nach DIN 5008. Login über widerrufbare Sessions mit Argon2id.',
         meta: {
           sprache: 'Go',
           framework: 'Gin',
           datenbank: 'PostgreSQL',
+          pdf: 'Maroto v2',
+          infra: 'Docker, GitHub Actions',
         },
-        tech: ['Go', 'Gin', 'PostgreSQL', 'Maroto v2', 'Argon2id'],
         repoUrl: 'https://github.com/Mirac61/VentoryGo',
-        visual: {
-          type: 'screenshot',
-          src: 'TODO',
-          filename: 'ventorygo.png',
-          alt: 'Screenshot der VentoryGo-Oberfläche',
-        },
+        media: { href: '/media/ventorygo.webp', label: 'mockup' },
       },
       {
         id: 'mysh',
@@ -181,19 +177,13 @@ export const content: Content = {
         lang: 'c++',
         path: '~/projects/mysh',
         status: 'TODO: Projektstatus eintragen',
-        desc: 'Eigene Unix-Shell in C++ mit Fokus auf Profiling und Performance-Optimierung.',
+        desc: 'Eigene Unix-Shell in C++: Pipes, Umleitungen, && und ||, Aliase, Tab-Vervollständigung und ein Powerline-Prompt mit Git-Status. Startzeit mit hyperfine gemessen (1,5 ms), Speicher mit Valgrind geprüft (keine Lecks).',
         meta: {
           sprache: 'C++',
-          fokus: 'Profiling, Performance',
+          messung: 'hyperfine, Valgrind',
         },
-        tech: ['C++', 'Unix', 'Profiling'],
         repoUrl: 'https://github.com/Mirac61/mysh',
-        visual: {
-          type: 'terminal',
-          src: 'TODO',
-          filename: 'mysh.webm',
-          alt: 'Terminal-Ausschnitt der mysh-Shell',
-        },
+        media: { href: '/media/mysh.mp4', poster: '/media/mysh.webp', label: 'aufnahme' },
       },
       {
         id: 'vlanscape',
@@ -203,20 +193,14 @@ export const content: Content = {
         lang: 'typescript',
         path: '~/projects/vlanscape',
         status: 'TODO: Projektstatus eintragen',
-        desc: 'Visueller Heimnetz-Planer für Geräte, Ports, VLANs und Rack-Aufbau. Gebaut mit React und TypeScript.',
+        desc: 'Planer fürs Heimnetz: Geräte platzieren, Ports verbinden, VLANs und WLANs festlegen und Hardware im Rack anordnen. Live-Prüfungen melden doppelte IPs, VLAN-Konflikte und Schleifen, bevor ein Kabel gezogen ist.',
         meta: {
           sprache: 'TypeScript',
           framework: 'React',
           thema: 'Netzwerk, VLANs, Rack',
         },
-        tech: ['TypeScript', 'React', 'Netzwerk', 'VLANs'],
         repoUrl: 'https://github.com/Mirac61/Vlanscape',
-        visual: {
-          type: 'screenshot',
-          src: '/media/vlanscape.webp',
-          filename: 'vlanscape.webp',
-          alt: 'Screenshot: Vlanscape-Topologie-Editor mit Geräten, Switch-Ports und VLAN-Verbindungen',
-        },
+        media: { href: '/media/vlanscape.webp', label: 'screenshot' },
       },
       {
         id: 'kairo',
@@ -226,46 +210,25 @@ export const content: Content = {
         lang: 'go',
         path: '~/projects/kairo',
         status: 'TODO: Projektstatus eintragen',
-        desc: 'Planer-App für Aufgaben, Kalender, Projekte und Notizen. Backend in Go, Frontend in Vue.',
+        desc: 'Lokaler Planer für Aufgaben, Kalender, Gewohnheiten und Notizen, ohne Konto und ohne Cloud. Go-Backend mit SQLite, Web-Oberfläche in Vue 3 und eine VS-Code-Erweiterung, die Aufgaben zum geöffneten Projekt zeigt.',
         meta: {
           sprache: 'Go',
           frontend: 'Vue',
-          thema: 'Aufgaben, Kalender, Notizen',
+          datenbank: 'SQLite',
         },
-        tech: ['Go', 'Vue', 'Planung'],
         repoUrl: 'https://github.com/Mirac61/Kairo',
-        visual: {
-          type: 'screenshot',
-          src: '/media/kairo.webp',
-          filename: 'kairo.webp',
-          alt: 'Screenshot: Kairo-Wochenansicht mit Kalendereinträgen und Ungeplant-Spalte',
-        },
+        media: { href: '/media/kairo.webp', label: 'screenshot' },
       },
     ],
   },
 
   stack: {
     title: 'stack',
-    tree: [
-      { prefix: '.', label: '', folder: false },
-      { prefix: '├── ', label: 'sprachen', folder: true },
-      { prefix: '│   ├── ', label: 'go', folder: false },
-      { prefix: '│   ├── ', label: 'java', folder: false },
-      { prefix: '│   ├── ', label: 'kotlin', folder: false },
-      { prefix: '│   └── ', label: 'c++', folder: false },
-      { prefix: '├── ', label: 'backend', folder: true },
-      { prefix: '│   ├── ', label: 'gin', folder: false },
-      { prefix: '│   ├── ', label: 'spring boot', folder: false },
-      { prefix: '│   ├── ', label: 'postgresql', folder: false },
-      { prefix: '│   └── ', label: 'keycloak', folder: false },
-      { prefix: '├── ', label: 'infra', folder: true },
-      { prefix: '│   ├── ', label: 'docker', folder: false },
-      { prefix: '│   └── ', label: 'ci/cd', folder: false },
-      { prefix: '└── ', label: 'tools', folder: true },
-      { prefix: '    ├── ', label: 'neovim', folder: false },
-      { prefix: '    ├── ', label: 'tmux', folder: false },
-      { prefix: '    ├── ', label: 'ghostty', folder: false },
-      { prefix: '    └── ', label: 'yazi', folder: false },
+    groups: [
+      { folder: 'sprachen', files: ['go', 'java', 'kotlin', 'c++'] },
+      { folder: 'backend', files: ['gin', 'spring boot', 'postgresql', 'keycloak'] },
+      { folder: 'infra', files: ['docker', 'ci/cd'] },
+      { folder: 'tools', files: ['neovim', 'tmux', 'ghostty', 'yazi'] },
     ],
   },
 

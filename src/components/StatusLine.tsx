@@ -5,7 +5,7 @@ const { footer } = content;
 
 export function StatusLine({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
   return (
-    <footer className="statusline" role="contentinfo">
+    <footer className="statusline">
       <div className="status-left">
         <span className="status-mode">{footer.mode}</span>
         <span className="status-branch">
@@ -19,10 +19,21 @@ export function StatusLine({ theme, onToggle }: { theme: Theme; onToggle: () => 
           </svg>
           {footer.branch}
         </span>
-        <span className="status-path">{footer.path}</span>
+      </div>
+      <div className="status-hints" aria-hidden="true">
+        {footer.hints.map(({ key, label }) => (
+          <span key={key}>
+            <span className="hint-key">{key}</span> {label}
+          </span>
+        ))}
       </div>
       <div className="status-right">
-        <button className="theme-toggle" onClick={onToggle} type="button">
+        <button
+          className="theme-toggle"
+          onClick={onToggle}
+          type="button"
+          aria-label={theme === 'dark' ? 'Helles Design einschalten' : 'Dunkles Design einschalten'}
+        >
           <span aria-hidden="true">[</span> {theme === 'dark' ? 'light' : 'dark'}{' '}
           <span aria-hidden="true">]</span>
         </button>
