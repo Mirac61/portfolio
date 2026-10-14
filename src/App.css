@@ -623,7 +623,8 @@ button {
 }
 
 /* facts as a two-column grid: label, value, optional sub.
-   the block is centred, but every entry stays left-aligned */
+   the block is centred; the left column hugs the left edge, the right column
+   the right edge, so the two halves mirror each other */
 .prof-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -633,6 +634,11 @@ button {
 
 .prof-fact {
   text-align: left;
+}
+
+/* right column: flush right against the block edge */
+.prof-fact:nth-child(even) {
+  text-align: right;
 }
 
 .prof-fact dt {
@@ -655,6 +661,11 @@ button {
 @container (max-width: 440px) {
   .prof-facts {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* single column: no mirrored halves, everything reads left-aligned */
+  .prof-fact:nth-child(even) {
+    text-align: left;
   }
 }
 
