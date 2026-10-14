@@ -8,7 +8,7 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 await page.goto('http://127.0.0.1:5173', { waitUntil: 'networkidle' });
 
 for (const id of ids) {
-  await page.click(`button[aria-controls="preview-${id}"]`);
+  await page.click(`button[role="option"]:has-text("${id}")`);
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${outDir}/project-${id}.png`, fullPage: true });
 }
