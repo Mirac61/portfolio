@@ -1,6 +1,6 @@
 # mirac@esslingen ~ portfolio
 
-Meine Portfolio-Seite im Stil eines Terminals mit tmux, lazygit und neofetch als Vorbild. Die Seite zeigt Profil, Projekte, Stack und ein kurzes Readme. Die Heatmap kommt aus meinem GitHub-Profil, die Codezeilen aus meinen lokalen Repos.
+Meine Portfolio-Seite im Stil eines Terminals mit tmux, lazygit und neofetch als Vorbild. Die Seite zeigt Profil, Projekte, Stack und ein kurzes Readme.
 
 <!-- Screenshot: Bild als docs/screenshot.png ablegen und in der nächsten Zeile die Kommentarzeichen entfernen -->
 <!-- <p align="center"><img src="docs/screenshot.png" alt="Screenshot der Portfolio-Seite" width="900"></p> -->
@@ -42,15 +42,6 @@ Bilder am besten als `.webp` im Format 16:10 ablegen. Sie werden auf dieses Form
 
 Einen Eintrag in `readme.sections` anlegen, entweder mit `paragraphs` für Fließtext oder mit `list` für Stichpunkte. Der Abschnitt erscheint automatisch auch in der Seitenleiste.
 
-## Heatmap und Codezeilen aktualisieren
-
-```bash
-node scripts/git-stats.mjs              # Codezeilen aus ~/code/personal
-node scripts/git-stats.mjs ~/anderer/ordner
-```
-
-Das Skript schreibt `src/data/git.json`. Die Heatmap der letzten 26 Wochen kommt über die GitHub-API aus dem Beitragskalender, die Zahlen sind also dieselben wie auf dem GitHub-Profil. Dafür muss die `gh`-CLI angemeldet sein (`gh auth login`). Die Codezeilen pro Sprache zählt das Skript in den lokalen Repos.
-
 ## Vorschaubild und Screenshots
 
 Titel und Beschreibung für Google und Link-Vorschauen stehen in `index.html`. Das Vorschaubild `public/og.png` wird bei laufendem Dev-Server so neu erzeugt:
@@ -77,8 +68,7 @@ src/
 ├── types.ts        Form der Inhalte
 ├── App.tsx         Fenster, Tastenkürzel, Layout
 ├── App.css         Farben, Abstände, Responsive
-├── components/     ein Fenster pro Datei, dazu Banner, Heatmap und Liste
-└── data/git.json   erzeugt von scripts/git-stats.mjs
+└── components/     ein Fenster pro Datei, dazu Banner und Liste
 ```
 
 Farben und Typografie folgen `DESIGN.md`.
