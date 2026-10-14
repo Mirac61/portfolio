@@ -1,14 +1,11 @@
 import { Pane } from './Pane';
 import { AsciiBanner } from './AsciiBanner';
 import { Heatmap } from './Heatmap';
-import { content, isPending } from '../content';
+import { content, links } from '../content';
 
-const { profile, statusBar } = content;
+const { profile } = content;
 
 const [user, host] = profile.host.split('@');
-
-// pending links (TODO) never render, so the first real link carries the solid style
-const links = Object.values(profile.links).filter(({ href }) => !isPending(href));
 
 function Host() {
   return (
@@ -22,11 +19,11 @@ function Host() {
 
 export function ProfileSide({ focused, onActivate }: { focused: boolean; onActivate: () => void }) {
   return (
-    <Pane id="profil" title="profil" focused={focused} onActivate={onActivate}>
+    <Pane id="profil" title={profile.title} focused={focused} onActivate={onActivate}>
       <Host />
       <p className="side-status">
         <span aria-hidden="true">● </span>
-        {statusBar.hiring}
+        {profile.status}
       </p>
     </Pane>
   );
@@ -56,7 +53,7 @@ export function ProfileMain() {
       <div className="profile-stats">
         <div className="neofetch">
           <dl>
-            {profile.lines.map(({ key, value }) => (
+            {profile.facts.map(({ key, value }) => (
               <div className="nf-row" key={key}>
                 <dt>{key}</dt>
                 <dd>{value}</dd>

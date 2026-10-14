@@ -1,10 +1,8 @@
 import { Pane } from './Pane';
-import { content, isPending } from '../content';
+import { content, links } from '../content';
 import git from '../data/git.json';
 
-const { readme, profile } = content;
-
-const links = Object.values(profile.links).filter(({ href }) => !isPending(href));
+const { readme } = content;
 
 // newest product commit of each project, most recent first
 const recent = Object.entries(git.projects)
@@ -12,7 +10,7 @@ const recent = Object.entries(git.projects)
   .sort((a, b) => b.date.localeCompare(a.date));
 
 // the side pane lists these headings, the text itself only lives in the main view
-const headings = ['über mich', ...readme.sections.map(({ heading }) => heading), 'zuletzt', 'links'];
+const headings = [...readme.sections.map(({ heading }) => heading), readme.recentHeading, readme.linksHeading];
 const sectionId = (index: number) => `readme-${index}`;
 
 export function ReadmeSide({ focused, onActivate }: { focused: boolean; onActivate: () => void }) {
@@ -54,16 +52,12 @@ function Heading({ index }: { index: number }) {
 }
 
 export function ReadmeMain() {
-  const last = readme.sections.length + 1;
+  const last = readme.sections.length;
   return (
     <div className="readme-content">
-      <section id={sectionId(0)}>
-        <Heading index={0} />
-        <p>{readme.lead}</p>
-      </section>
       {readme.sections.map((section, index) => (
-        <section key={section.heading} id={sectionId(index + 1)}>
-          <Heading index={index + 1} />
+        <section key={section.heading} id={sectionId(index)}>
+          <Heading index={index} />
           {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           {section.list && (
             <ul>

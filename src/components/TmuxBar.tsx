@@ -1,14 +1,20 @@
 import { content } from '../content';
 
-const { statusBar } = content;
-
-export function TmuxBar({ activeTab, onOpen }: { activeTab: string; onOpen: (id: string) => void }) {
+export function TmuxBar({
+  tabs,
+  activeTab,
+  onOpen,
+}: {
+  tabs: { id: string; label: string }[];
+  activeTab: string;
+  onOpen: (id: string) => void;
+}) {
   return (
     <header className="tmux-bar">
       <div className="tmux-left">
-        <span className="session-block">{statusBar.session}</span>
+        <span className="session-block">{content.session}</span>
         <nav className="tmux-tabs" aria-label="Hauptnavigation">
-          {statusBar.tabs.map(({ id, label }, index) => (
+          {tabs.map(({ id, label }, index) => (
             <a
               key={id}
               href={`#${id}`}

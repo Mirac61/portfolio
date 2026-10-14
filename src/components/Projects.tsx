@@ -1,7 +1,7 @@
 import { Pane } from './Pane';
 import { SelectList } from './SelectList';
-import { content, isPending } from '../content';
-import type { Project } from '../content';
+import { content } from '../content';
+import type { Project } from '../types';
 import git from '../data/git.json';
 
 const { projects } = content;
@@ -20,7 +20,6 @@ export function ProjectsSide({
   return (
     <Pane
       id="projekte"
-     
       title={projects.title}
       focused={focused}
       onActivate={onActivate}
@@ -31,7 +30,7 @@ export function ProjectsSide({
         onSelect={onSelect}
         items={projects.items.map((project) => ({
           key: project.id,
-          name: project.name,
+          name: project.id,
           detail: project.type,
         }))}
       />
@@ -43,16 +42,16 @@ export function ProjectsSide({
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function Visual({ project }: { project: Project }) {
-  const { href, label, poster } = project.media;
-  if (isPending(href)) return null;
+  if (!project.media) return null;
+  const { src, label, poster } = project.media;
   const alt = `${label} von ${project.title}`;
   return (
-    <a className="media" href={href} target="_blank" rel="noopener noreferrer">
-      <span className="media-bar">{href.split('/').pop()}</span>
-      {href.endsWith('.mp4') ? (
-        <video src={href} poster={poster} aria-label={alt} muted loop playsInline autoPlay={!reducedMotion} preload="metadata" />
+    <a className="media" href={src} target="_blank" rel="noopener noreferrer">
+      <span className="media-bar">{src.split('/').pop()}</span>
+      {src.endsWith('.mp4') ? (
+        <video src={src} poster={poster} aria-label={alt} muted loop playsInline autoPlay={!reducedMotion} preload="metadata" />
       ) : (
-        <img src={href} alt={alt} loading="lazy" />
+        <img src={src} alt={alt} loading="lazy" />
       )}
     </a>
   );
@@ -66,7 +65,7 @@ export function ProjectMain({ project }: { project: Project }) {
     <article className="project-main">
       <div className="project-text">
         <h3 className="detail-title">{project.title}</h3>
-        {project.status === 'in arbeit' && <span className="status-pill">in arbeit</span>}
+        {project.status && <span className="status-pill">{project.status}</span>}
         <p className="detail-desc">{project.desc}</p>
         <dl className="detail-meta">
           {Object.entries(project.meta).map(([key, value]) => (
@@ -106,7 +105,7 @@ export function ProjectMain({ project }: { project: Project }) {
             </ol>
           </figure>
         )}
-        {!isPending(project.repoUrl) && (
+        {project.repoUrl && (
           <div className="actions">
             <a className="btn btn-solid" href={project.repoUrl} target="_blank" rel="noopener noreferrer">
               <span aria-hidden="true">[</span> {projects.repoLabel} <span aria-hidden="true">]</span>

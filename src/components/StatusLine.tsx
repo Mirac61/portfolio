@@ -3,6 +3,13 @@ import type { Theme } from '../theme';
 
 const { footer } = content;
 
+// mirrors the keybindings in App.tsx
+const HINTS = [
+  { key: '0-3', label: 'fenster' },
+  { key: 'j/k', label: 'auswahl' },
+  { key: 't', label: 'theme' },
+];
+
 export function StatusLine({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
   return (
     <footer className="statusline">
@@ -21,7 +28,7 @@ export function StatusLine({ theme, onToggle }: { theme: Theme; onToggle: () => 
         </span>
       </div>
       <div className="status-hints" aria-hidden="true">
-        {footer.hints.map(({ key, label }) => (
+        {HINTS.map(({ key, label }) => (
           <span key={key}>
             <span className="hint-key">{key}</span> {label}
           </span>

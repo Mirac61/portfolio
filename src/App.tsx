@@ -9,8 +9,15 @@ import { Pane } from './components/Pane';
 import { applyTheme, initialTheme, nextTheme, type Theme } from './theme';
 import { content } from './content';
 
-const WINDOWS = content.statusBar.tabs.map((tab) => tab.id);
-const { projects, stack } = content;
+const { profile, projects, stack, readme } = content;
+// window ids are fixed because each one maps to a view below, the labels come from content.ts
+const TABS = [
+  { id: 'profil', label: profile.title },
+  { id: 'projekte', label: projects.title },
+  { id: 'stack', label: stack.title },
+  { id: 'readme', label: readme.title },
+];
+const WINDOWS = TABS.map((tab) => tab.id);
 
 // the URL hash is the active tmux window, so tabs are plain links and back works
 function windowFromHash(): string {
@@ -80,14 +87,14 @@ function App() {
   const project = projects.items[projectIndex];
   const main = {
     profil: { path: '~/mirac', view: <ProfileMain /> },
-    projekte: { path: project.path, view: <ProjectMain project={project} /> },
+    projekte: { path: `~/projects/${project.id}`, view: <ProjectMain project={project} /> },
     stack: { path: `~/stack/${stack.groups[stackIndex].folder}`, view: <StackMain index={stackIndex} /> },
     readme: { path: '~/mirac/README.md', view: <ReadmeMain /> },
   }[active] ?? { path: '~/mirac', view: <ProfileMain /> };
 
   return (
     <>
-      <TmuxBar activeTab={active} onOpen={openWindow} />
+      <TmuxBar tabs={TABS} activeTab={active} onOpen={openWindow} />
       <main className="workspace">
         <div className="side">
           <ProfileSide focused={active === 'profil'} onActivate={() => openWindow('profil')} />

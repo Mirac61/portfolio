@@ -18,7 +18,7 @@ function usedIn(file: string): string[] {
           .includes(file),
       ),
     )
-    .map((project) => project.name);
+    .map((project) => project.id);
 }
 
 export function StackSide({
@@ -35,7 +35,6 @@ export function StackSide({
   return (
     <Pane
       id="stack"
-     
       title={stack.title}
       focused={focused}
       onActivate={onActivate}
