@@ -4,10 +4,10 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
+import { content } from '../src/content.ts';
 
 const reposDir = process.argv[2] ?? join(homedir(), 'code/personal');
-const PROJECT_DIRS = { ventorygo: 'ventorygo', mysh: 'mysh', vlanscape: 'Vlanscape', kairo: 'Kairo' };
 const OWN_AUTHOR = /mirac|sancak/i;
 const ACTIVITY_WEEKS = 26;
 const LANGUAGES = {
@@ -69,8 +69,13 @@ for (const repo of repos) {
 }
 
 const projects = {};
-for (const [id, dir] of Object.entries(PROJECT_DIRS)) {
-  const repo = join(reposDir, dir);
+// each project's repo is the folder named like its id, ignoring case
+for (const { id } of content.projects.items) {
+  const repo = repos.find((path) => basename(path).toLowerCase() === id);
+  if (!repo) {
+    console.warn(`no repo folder for ${id} in ${reposDir}, skipped`);
+    continue;
+  }
   const dates = git(repo, 'log', '--format=%as').trim().split('\n');
   const others = new Set(
     git(repo, 'log', '--format=%an\t%ae')
