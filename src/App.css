@@ -731,6 +731,28 @@ button {
   margin-top: 32px;
 }
 
+/* phones: the visual leads instead of trailing the git log,
+   the log drops the hash so the subject has room to wrap */
+@container (max-width: 719px) {
+  .media {
+    order: -1;
+  }
+}
+
+@container (max-width: 480px) {
+  .git-log li {
+    grid-template-columns: 10ch minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .log-hash {
+    display: none;
+  }
+
+  .log-subject {
+    white-space: normal;
+  }
+}
 
 /* every visual: same frame, same width, 16:10 */
 .media {
