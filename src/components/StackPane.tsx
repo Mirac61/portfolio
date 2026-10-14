@@ -12,9 +12,9 @@ function countSummary() {
 export function StackPane({ focused = false }: { focused?: boolean }) {
   return (
     <Pane id="stack" number={2} title={stack.title} focused={focused} className="stack-pane">
-      <div className="tree" role="tree" aria-label="Technologie-Stack">
+      <div className="tree" aria-label="Technologie-Stack">
         {stack.tree.map((line, index) => (
-          <div className="tree-line" role="treeitem" key={index}>
+          <div className="tree-line" key={index}>
             <span aria-hidden="true">{line.prefix}</span>
             {line.folder ? (
               <span className="tree-folder">{line.label}</span>

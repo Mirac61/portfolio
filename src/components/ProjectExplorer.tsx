@@ -32,20 +32,19 @@ function ProjectList({
     .replace('{total}', String(items.length));
 
   return (
-    <div
-      className="project-list"
-      role="tablist"
-      aria-label="Projektliste"
-      onKeyDown={handleKeyDown}
-    >
-      <div className="project-rows">
+    <div className="project-list">
+      <div
+        className="project-rows"
+        role="listbox"
+        aria-label="Projektliste"
+        onKeyDown={handleKeyDown}
+      >
         {items.map((project, index) => (
           <button
             key={project.id}
             className={`project-row ${index === activeIndex ? 'active' : ''}`}
-            role="tab"
+            role="option"
             aria-selected={index === activeIndex}
-            aria-controls={`preview-${project.id}`}
             tabIndex={index === activeIndex ? 0 : -1}
             onClick={() => onSelect(index)}
             type="button"
@@ -146,7 +145,7 @@ function ProjectDetail({ project, isActive }: { project: Project; isActive: bool
     <article
       className={`project-detail ${isActive ? 'active' : ''}`}
       id={`preview-${project.id}`}
-      role="tabpanel"
+      aria-label={project.title}
       tabIndex={0}
       hidden={!isActive}
     >
@@ -183,7 +182,7 @@ function ProjectDetail({ project, isActive }: { project: Project; isActive: bool
   );
 }
 
-export function ProjectExplorer() {
+export function ProjectExplorer({ focused = false }: { focused?: boolean }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
@@ -192,7 +191,7 @@ export function ProjectExplorer() {
       number={1}
       title={projects.title}
       count={projects.items.length}
-      focused
+      focused={focused}
       className="projects-pane"
     >
       <div className="projects-layout">

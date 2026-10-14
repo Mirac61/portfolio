@@ -1,8 +1,9 @@
 import { content } from '../content';
+import type { Theme } from '../theme';
 
 const { footer } = content;
 
-export function StatusLine() {
+export function StatusLine({ theme, onToggle }: { theme: Theme; onToggle: () => void }) {
   return (
     <footer className="statusline" role="contentinfo">
       <div className="status-left">
@@ -21,6 +22,10 @@ export function StatusLine() {
         <span className="status-path">{footer.path}</span>
       </div>
       <div className="status-right">
+        <button className="theme-toggle" onClick={onToggle} type="button">
+          <span aria-hidden="true">[</span> {theme === 'dark' ? 'light' : 'dark'}{' '}
+          <span aria-hidden="true">]</span>
+        </button>
         <span className="status-meta">{footer.meta}</span>
       </div>
     </footer>

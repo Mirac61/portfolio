@@ -1,37 +1,10 @@
-import { useEffect, useState } from 'react';
 import { content } from '../content';
 
 const { statusBar } = content;
 
-export function TmuxBar() {
-  const [active, setActive] = useState<string>(statusBar.tabs[0].id);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActive(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: '-40% 0px -55% 0px', threshold: 0 },
-    );
-
-    statusBar.tabs.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
+export function TmuxBar({ activeTab }: { activeTab: string }) {
   const handleClick = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setActive(id);
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
@@ -42,12 +15,13 @@ export function TmuxBar() {
           {statusBar.tabs.map(({ id, label }, index) => (
             <button
               key={id}
-              className={`tmux-tab ${active === id ? 'active' : ''}`}
+              className={`tmux-tab ${activeTab === id ? 'active' : ''}`}
               onClick={() => handleClick(id)}
-              aria-current={active === id ? 'page' : undefined}
+              aria-current={activeTab === id ? 'page' : undefined}
               type="button"
             >
-              {index}:{label}{active === id ? '*' : ''}
+              {index}:{label}
+              {activeTab === id ? '*' : ''}
             </button>
           ))}
         </nav>

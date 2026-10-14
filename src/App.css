@@ -71,7 +71,7 @@
   /* text */
   --text: #ededed;
   --text-secondary: #a1a1a1;
-  --text-muted: #666666;
+  --text-muted: #808080;
   --text-deco: #444444;
 
   /* accent */
@@ -101,6 +101,9 @@
   /* typography */
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* motion */
+  --dur: 140ms;
 }
 
 /* Light mode tokens (prepared, toggle currently disabled) */
@@ -120,7 +123,7 @@
 
   --text: #171717;
   --text-secondary: #525252;
-  --text-muted: #737373;
+  --text-muted: #6b6b6b;
   --text-deco: #a3a3a3;
 
   --accent: #7c3aed;
@@ -215,10 +218,6 @@ button {
   align-items: start;
 }
 
-.projects-pane {
-  margin-bottom: 44px;
-}
-
 /* ===================================================================
    tmux-Bar
    =================================================================== */
@@ -267,6 +266,12 @@ button {
   display: flex;
   align-items: center;
   gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tmux-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tmux-tab {
@@ -278,7 +283,7 @@ button {
   padding: 0 10px;
   border-radius: var(--radius-small);
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color var(--dur) ease, color var(--dur) ease;
   white-space: nowrap;
   font-size: 12px;
 }
@@ -383,9 +388,23 @@ button {
   white-space: nowrap;
 }
 
-/* Theme toggle currently hidden */
+/* Theme toggle in the statusline */
 .theme-toggle {
-  display: none;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  height: 28px;
+  padding: 0 8px;
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  font-size: 12px;
+  transition: color var(--dur) ease, background-color var(--dur) ease;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+  background: var(--bg-hover);
 }
 
 /* ===================================================================
@@ -397,7 +416,7 @@ button {
   border-radius: var(--radius);
   padding: calc(var(--pane-padding) + 10px) var(--pane-padding) var(--pane-padding);
   background: var(--bg-pane);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color var(--dur) ease, box-shadow var(--dur) ease;
 }
 
 .pane:hover {
@@ -442,7 +461,7 @@ button {
   padding: 0 16px;
   border-radius: var(--radius-small);
   font-size: 14px;
-  transition: filter 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+  transition: filter var(--dur) ease, background-color var(--dur) ease, border-color var(--dur) ease;
 }
 
 .btn-solid {
@@ -469,6 +488,13 @@ button {
 .btn[aria-disabled="true"] {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+/* solid + pending: opacity would kill the contrast of the label */
+.btn-solid[aria-disabled="true"] {
+  opacity: 1;
+  background: var(--accent-soft);
+  color: var(--accent-text);
 }
 
 /* ===================================================================
@@ -613,7 +639,7 @@ button {
   cursor: pointer;
   text-align: left;
   font-size: 14px;
-  transition: background-color 0.15s ease;
+  transition: background-color var(--dur) ease;
 }
 
 .project-row:hover {
@@ -627,6 +653,10 @@ button {
 
 .project-row.active {
   background: var(--accent-soft);
+}
+
+.project-row.active .row-type {
+  color: var(--text-secondary);
 }
 
 .row-marker {
@@ -938,6 +968,12 @@ button {
   }
 }
 
+@media (max-width: 640px) {
+  .tmux-right {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .ff-line {
     font-size: 12px;
@@ -947,29 +983,44 @@ button {
     flex: 1 1 calc(50% - 6px);
   }
 
-  .tmux-bar,
-  .statusline {
-    flex-wrap: wrap;
-    height: auto;
-    min-height: 44px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
-
-  .tmux-right {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .status-left,
-  .status-right {
-    width: 100%;
-    justify-content: flex-start;
+  .status-path,
+  .status-meta {
+    display: none;
   }
 
   .status-branch,
   .status-mode {
     clip-path: none;
     margin-left: 0;
+  }
+}
+
+/* ===================================================================
+   OG capture frame (?og=1)
+   =================================================================== */
+.og-frame {
+  width: 1200px;
+  height: 630px;
+  padding: 32px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+}
+
+.og-frame .pane {
+  width: 100%;
+}
+
+/* ===================================================================
+   Reduced motion
+   =================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

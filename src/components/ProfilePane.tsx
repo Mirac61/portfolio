@@ -4,9 +4,9 @@ import { content, isPending } from '../content';
 
 const { profile } = content;
 
-export function ProfilePane() {
+export function ProfilePane({ focused = false }: { focused?: boolean }) {
   return (
-    <Pane id="profil" number={0} title="profil" className="profil-pane">
+    <Pane id="profil" number={0} title="profil" focused={focused} className="profil-pane">
       <div className="profil-grid">
         <NameLogo />
         <div className="profil-info">
