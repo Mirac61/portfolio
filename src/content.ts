@@ -85,7 +85,6 @@ export interface Content {
   stack: {
     title: string;
     tree: StackTreeItem[];
-    summary: string;
   };
   readme: {
     title: string;
@@ -214,9 +213,9 @@ export const content: Content = {
         repoUrl: 'https://github.com/Mirac61/Vlanscape',
         visual: {
           type: 'screenshot',
-          src: 'TODO',
-          filename: 'vlanscape.png',
-          alt: 'Screenshot des Vlanscape-Netzwerkplaners',
+          src: '/media/vlanscape.webp',
+          filename: 'vlanscape.webp',
+          alt: 'Screenshot: Vlanscape-Topologie-Editor mit Geräten, Switch-Ports und VLAN-Verbindungen',
         },
       },
       {
@@ -237,9 +236,9 @@ export const content: Content = {
         repoUrl: 'https://github.com/Mirac61/Kairo',
         visual: {
           type: 'screenshot',
-          src: 'TODO',
-          filename: 'kairo.png',
-          alt: 'Screenshot der Kairo-Planer-Oberfläche',
+          src: '/media/kairo.webp',
+          filename: 'kairo.webp',
+          alt: 'Screenshot: Kairo-Wochenansicht mit Kalendereinträgen und Ungeplant-Spalte',
         },
       },
     ],
@@ -251,40 +250,32 @@ export const content: Content = {
       { prefix: '.', label: '', folder: false },
       { prefix: '├── ', label: 'sprachen', folder: true },
       { prefix: '│   ├── ', label: 'go', folder: false },
-      { prefix: '│   ├── ', label: 'java / spring boot', folder: false },
-      { prefix: '│   ├── ', label: 'kotlin / android', folder: false },
+      { prefix: '│   ├── ', label: 'java', folder: false },
+      { prefix: '│   ├── ', label: 'kotlin', folder: false },
       { prefix: '│   └── ', label: 'c++', folder: false },
       { prefix: '├── ', label: 'backend', folder: true },
+      { prefix: '│   ├── ', label: 'gin', folder: false },
+      { prefix: '│   ├── ', label: 'spring boot', folder: false },
       { prefix: '│   ├── ', label: 'postgresql', folder: false },
-      { prefix: '│   ├── ', label: 'docker', folder: false },
       { prefix: '│   └── ', label: 'keycloak', folder: false },
-      { prefix: '├── ', label: 'tools', folder: true },
-      { prefix: '│   ├── ', label: 'ci/cd', folder: false },
-      { prefix: '│   └── ', label: 'git', folder: false },
-      { prefix: '└── ', label: 'lernen', folder: true },
-      { prefix: '    └── ', label: 'TODO: hier eintragen', folder: false },
+      { prefix: '├── ', label: 'infra', folder: true },
+      { prefix: '│   ├── ', label: 'docker', folder: false },
+      { prefix: '│   └── ', label: 'ci/cd', folder: false },
+      { prefix: '└── ', label: 'tools', folder: true },
+      { prefix: '    ├── ', label: 'neovim', folder: false },
+      { prefix: '    ├── ', label: 'tmux', folder: false },
+      { prefix: '    ├── ', label: 'ghostty', folder: false },
+      { prefix: '    └── ', label: 'yazi', folder: false },
     ],
-    summary: '4 verzeichnisse, 6 dateien',
   },
 
   readme: {
     title: 'readme',
-    lead: 'TODO: Lead-Satz eintragen',
+    lead: 'Ich studiere Softwaretechnik an der HS Esslingen, aktuell im 5. Semester. Mein Schwerpunkt ist Backend-Entwicklung mit Go und Java/Spring Boot. Go habe ich mir selbst beigebracht.',
     sections: [
       {
-        heading: 'über mich',
-        paragraphs: ['TODO: Abschnitt über mich eintragen. Nichts erfinden.'],
-      },
-      {
         heading: 'was ich suche',
-        list: [
-          'Werkstudentenstelle im Backend',
-          'Praxissemester ab SS 2027',
-        ],
-      },
-      {
-        heading: 'kontakt',
-        paragraphs: ['TODO: Kontakt-Text eintragen.'],
+        list: ['eine Werkstudentenstelle im Backend', 'ein Praxissemester ab SS 2027'],
       },
     ],
   },

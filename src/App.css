@@ -581,7 +581,7 @@ button {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: var(--gap);
-  min-height: 520px;
+  align-items: stretch;
 }
 
 .project-list {
@@ -810,11 +810,99 @@ button {
 .visual-content video {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .detail-link {
   align-self: flex-start;
+}
+
+/* ===================================================================
+   Stack + Readme row
+   =================================================================== */
+.bottom-row {
+  display: grid;
+  grid-template-columns: minmax(280px, 2fr) minmax(0, 3fr);
+  gap: var(--gap);
+  align-items: stretch;
+  width: 100%;
+}
+
+.bottom-row .pane {
+  height: 100%;
+}
+
+.tree {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.tree-line span[aria-hidden="true"] {
+  color: var(--text-deco);
+}
+
+.tree-folder {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.tree-file {
+  color: var(--text);
+}
+
+.tree-summary {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.readme-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: var(--font-sans);
+}
+
+.readme-lead {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  max-width: 65ch;
+}
+
+.readme-content h3 {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+
+.readme-content h3 span[aria-hidden="true"] {
+  color: var(--text-deco);
+}
+
+.readme-content p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 65ch;
+}
+
+.readme-content ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.readme-content li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.readme-content li span[aria-hidden="true"] {
+  color: var(--accent-text);
 }
 
 /* ===================================================================

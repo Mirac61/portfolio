@@ -1,27 +1,32 @@
 import { Pane } from './Pane';
+import { content } from '../content';
 
-export function ReadmePane() {
+const { readme } = content;
+
+export function ReadmePane({ focused = false }: { focused?: boolean }) {
   return (
-    <Pane id="readme" number={4} title="readme" className="readme-pane">
+    <Pane id="readme" number={3} title={readme.title} focused={focused} className="readme-pane">
       <div className="readme-content">
-        <p className="readme-lead">
-          Ich baue Software, die sich anfühlt wie ein gutes CLI-Tool: schnell, vorhersehbar und ohne Ablenkung.
-        </p>
-
-        <h3><span aria-hidden="true">## </span>über mich</h3>
-        <p>
-          Studiere Informatik an der Hochschule Esslingen und arbeite nebenbei in der IT. Mein Interesse gilt Backend-Systemen, Netzwerken und Entwickler-Tools. Ich mag Oberflächen, die klare Struktur zeigen, statt sie zu verstecken.
-        </p>
-
-        <h3><span aria-hidden="true">## </span>was ich suche</h3>
-        <ul>
-          <li><span aria-hidden="true">- </span>einen Werkstudenten-Platz im Backend oder in der Infrastruktur</li>
-          <li><span aria-hidden="true">- </span>ein Praxissemester ab SS 2027</li>
-          <li><span aria-hidden="true">- </span>Teams, in denen man sich Tooling selbst bauen darf</li>
-        </ul>
-
-        <h3><span aria-hidden="true">## </span>kontakt</h3>
-        <p>Schreib mir eine Mail oder schau auf GitHub vorbei. Ich antworte meist innerhalb eines Tages.</p>
+        <p className="readme-lead">{readme.lead}</p>
+        {readme.sections.map((section) => (
+          <section key={section.heading}>
+            <h3>
+              <span aria-hidden="true">## </span>
+              {section.heading}
+            </h3>
+            {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            {section.list && (
+              <ul>
+                {section.list.map((item) => (
+                  <li key={item}>
+                    <span aria-hidden="true">- </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))}
       </div>
     </Pane>
   );

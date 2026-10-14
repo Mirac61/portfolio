@@ -1,40 +1,29 @@
 import { Pane } from './Pane';
+import { content } from '../content';
 
-const tree = [
-  { prefix: '.', folder: false },
-  { prefix: '├── ', label: 'sprachen', folder: true },
-  { prefix: '│   ├── ', label: 'go', folder: false },
-  { prefix: '│   ├── ', label: 'python', folder: false },
-  { prefix: '│   ├── ', label: 'typescript', folder: false },
-  { prefix: '│   └── ', label: 'c', folder: false },
-  { prefix: '├── ', label: 'backend', folder: true },
-  { prefix: '│   ├── ', label: 'postgresql', folder: false },
-  { prefix: '│   ├── ', label: 'redis', folder: false },
-  { prefix: '│   └── ', label: 'docker', folder: false },
-  { prefix: '├── ', label: 'tools', folder: true },
-  { prefix: '│   ├── ', label: 'neovim', folder: false },
-  { prefix: '│   ├── ', label: 'tmux', folder: false },
-  { prefix: '│   ├── ', label: 'lazygit', folder: false },
-  { prefix: '│   └── ', label: 'btop', folder: false },
-  { prefix: '└── ', label: 'lernen', folder: true },
-  { prefix: '    └── ', label: 'kubernetes', folder: false },
-];
+const { stack } = content;
 
-export function StackPane() {
+function countSummary() {
+  const directories = stack.tree.filter((item) => item.folder).length;
+  const files = stack.tree.filter((item) => !item.folder && item.label !== '').length;
+  return `${directories} verzeichnisse, ${files} dateien`;
+}
+
+export function StackPane({ focused = false }: { focused?: boolean }) {
   return (
-    <Pane id="stack" number={3} title="stack" className="stack-pane">
-      <div className="tree inset-box" role="tree" aria-label="Technologie-Stack">
-        {tree.map((line, i) => (
-          <div key={i} className="tree-line" role="treeitem">
+    <Pane id="stack" number={2} title={stack.title} focused={focused} className="stack-pane">
+      <div className="tree" role="tree" aria-label="Technologie-Stack">
+        {stack.tree.map((line, index) => (
+          <div className="tree-line" role="treeitem" key={index}>
             <span aria-hidden="true">{line.prefix}</span>
             {line.folder ? (
               <span className="tree-folder">{line.label}</span>
             ) : (
-              line.label
+              <span className="tree-file">{line.label}</span>
             )}
           </div>
         ))}
-        <div className="tree-summary">4 verzeichnisse, 11 dateien</div>
+        <div className="tree-summary">{countSummary()}</div>
       </div>
     </Pane>
   );
