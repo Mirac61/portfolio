@@ -1,36 +1,23 @@
 # ASCII-Art im Stack
 
-Das `stack`-Fenster zeigt die ASCII-Bilder im Platzhalter-Slot der Detailansicht, also nach dem `cd` in einen Eintrag.
+Das `stack`-Fenster zeigt nach dem `cd` in einen Eintrag oben ein ASCII-Logo und darunter den Text aus `content.ts` (`desc`, `did`, `likes`). Das Logo wird per CSS im Lila des Profil-Banners eingefärbt und folgt dem Theme.
 
-## Status
+## Dateien
 
-| Eintrag | Quelle / Lizenz | Notiz |
-|---|---|---|
-| java | selbst gezeichnet | Block-Wortmarke, Interim |
-| kotlin | selbst gezeichnet | Block-Wortmarke, Interim |
-| spring boot | selbst gezeichnet | Block-Wortmarke, Interim |
-| keycloak | selbst gezeichnet | Block-Wortmarke, Interim |
-| ci/cd | selbst gezeichnet | Block-Wortmarke, Interim |
-| neovim | selbst gezeichnet | Block-Wortmarke, Interim |
-| tmux | selbst gezeichnet | Block-Wortmarke, Interim |
-| ghostty | selbst gezeichnet | Block-Wortmarke, Interim |
-| yazi | selbst gezeichnet | Block-Wortmarke, Interim |
+Jedes Logo liegt als Textdatei in `src/images/<name>_logo.txt`. Sonderzeichen im Namen werden zu `_`, also `spring boot` → `spring_boot_logo.txt`, `c++` → `c__logo.txt`, `ci/cd` → `ci_cd_logo.txt`. Fehlt die Datei, bleibt die Fläche einfach leer.
 
-## Offen: echte ASCII-Bilder
+| Eintrag | Quelle |
+|---|---|
+| go | von Hand, `go_logo.txt` |
+| java, kotlin, c++, gin, spring boot, postgresql, sqlite, keycloak, docker, ci/cd (GitHub Actions), neovim, tmux, ghostty | Logo aus [simple-icons](https://simpleicons.org) (CC0), mit `scripts/ascii-logos.mjs` umgewandelt |
+| yazi | kein Logo in simple-icons, Schriftzug in JetBrains Mono, ebenfalls aus dem Skript |
 
-Diese Einträge haben aktuell eine Block-Wortmarke als Platzhalter. Hier sollten später echte, wiedererkennbare ASCII-Art-Bilder hin:
+## Neu erzeugen
 
-- [ ] `java` – z. B. Kaffeetasse
-- [ ] `kotlin` – z. B. Kotlin-Logo
-- [ ] `spring boot` – z. B. Feder / Blatt
-- [ ] `keycloak` – z. B. Schlüssel
-- [ ] `ci/cd` – z. B. Pipeline-Pfeile
-- [ ] `neovim` – z. B. Editor-Fenster / Neovim-Logo
-- [ ] `tmux` – z. B. geteilte Fenster
-- [ ] `ghostty` – z. B. Terminal-Fenster
-- [ ] `yazi` – z. B. Dateimanager-Baum
+```bash
+node scripts/ascii-logos.mjs
+# falls Playwrights eigener Browser fehlt:
+CHROMIUM_PATH=/pfad/zu/chrome node scripts/ascii-logos.mjs
+```
 
-## Quellen
-
-- Block-Wortmarken: selbst gezeichnet aus einem 5×n-Block-Alphabet; keine Lizenzabhängigkeiten.
-- Projektbilder: siehe `src/content.ts` und `public/media/`.
+Das Skript überschreibt alle Logos außer `go_logo.txt`. Breite (`cols`) und Zeichenrampe (` .:-=`, wie beim Go-Logo) stehen oben im Skript. Eine Datei lässt sich danach auch von Hand nachbessern. Dann den Eintrag aus `logos` im Skript nehmen, damit sie beim nächsten Lauf nicht überschrieben wird.

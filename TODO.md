@@ -1,7 +1,5 @@
 TODO
 
-- ASCII Art selber generieren oder finden für die ICons
-- Die Darstellung anpassen, sodass das Bild oben, dasnn der Titel und dann eine gute beschreibung da ist
-- Text fixen
+- Text fixen (Stack: did/likes in content.ts in eigenen Worten)
 - Bilder größer und schönere Darstellung
-- 
+- Lint-Fehler in Projects.tsx: useThemeMediaSrc wird bedingt aufgerufen

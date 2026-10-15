@@ -1,7 +1,15 @@
 // Alle Texte der Seite. Nur diese Datei anfassen, um Inhalte zu ändern.
 // Leere Strings ('') werden nicht angezeigt. Bilder liegen in public/media.
 import type { Content, StackRow } from './types';
-import goASCII from "./images/go_logo.txt?raw";
+
+// ASCII-Logos: src/images/<name>_logo.txt, z.B. "spring boot" -> spring_boot_logo.txt.
+// go ist von Hand gemacht, die übrigen erzeugt scripts/ascii-logos.mjs.
+const logoFiles = import.meta.glob<string>('./images/*_logo.txt', { query: '?raw', import: 'default', eager: true });
+
+export function stackArt(name: string): string[] | undefined {
+  const art = logoFiles[`./images/${name.replace(/[^a-z0-9]+/g, '_')}_logo.txt`];
+  return art ? art.replace(/\s+$/, '').split(/\r?\n/) : undefined;
+}
 
 export const content: Content = {
   // Kasten oben links in der tmux-Leiste
@@ -136,10 +144,9 @@ export const content: Content = {
   },
 
   // 2: Stack als Verzeichnis: Sidebar = Ordner, Haupt-Pane = `ls`-Listing des
-  // Ordners. Enter oder Klick auf eine Datei = `cd` hinein (Detailansicht,
-  // aktuell ein Platzhalter-Slot), esc oder cd .. zurück. Ein Eintrag, der
-  // in den meta-Werten eines Projekts vorkommt, bekommt "# projektname" dahinter.
-  // `info` liefert Text und ASCII-Grafik für den Slot.
+  // Ordners. Enter oder Klick auf eine Datei = `cd` hinein (Detailansicht mit
+  // ASCII-Logo und Text), esc oder cd .. zurück. Ein Eintrag, der in den
+  // meta-Werten eines Projekts vorkommt, bekommt "# projektname" dahinter.
   stack: {
     title: 'stack',
     groups: [
@@ -154,107 +161,84 @@ export const content: Content = {
       infra: { desc: 'Bauen, testen und ausliefern.' },
       tools: { desc: 'Mein Terminal-Alltag.' },
 
+      // desc = eine Zeile fürs ls-Listing, did/likes = Text in der Detailansicht
       go: {
-        desc: 'Meine Hauptsprache im Backend. Ganzzahlige Cents, klare Nebenläufigkeit, schnelle Builds.',
-        art: goASCII.trim().split(/\r?\n/),
+        desc: 'Meine Hauptsprache im Backend.',
+        did: 'Das Backend von VentoryGo mit Gin und PostgreSQL, Kairo mit SQLite und yawntest, ein Tool, das aus Go-Code automatisch Tests erzeugt. Go habe ich mir selbst beigebracht.',
+        likes: 'Wenig Magie, schnelle Builds und eine Standardbibliothek, mit der man ohne Abhängigkeiten weit kommt. Fehler sind normale Rückgabewerte und damit immer sichtbar.',
       },
       java: {
         desc: 'Aus dem Studium und für Spring-Boot-Dienste.',
-        art: [
-          '  ███  ███  █   █  ███',
-          '   █  █   █ █   █ █   █',
-          '   █  █████ █   █ █████',
-          '█  █  █   █  █ █  █   █',
-          ' ██   █   █   █   █   █',
-        ],
+        did: 'Die Grundlagen der Objektorientierung im Studium und die Spring-Boot-API im Activity Tracker.',
+        likes: 'Das ausgereifte Ökosystem und eine Typisierung, die auch in großen Codebasen den Überblick hält.',
       },
       kotlin: {
         desc: 'Moderne JVM-Sprache, wenn Java zu ausführlich wird.',
-        art: [
-          '█   █  ███  █████ █      ███  █   █',
-          '█  █  █   █   █   █       █   ██  █',
-          '███   █   █   █   █       █   █ █ █',
-          '█  █  █   █   █   █       █   █  ██',
-          '█   █  ███    █   █████  ███  █   █',
-        ],
+        did: 'Den Android-Client des Activity Trackers, inklusive Offline-Sync über WorkManager und der Statistik-Ansicht.',
+        likes: 'Null-Sicherheit im Typsystem, Data Classes und Coroutines statt verschachtelter Callbacks.',
       },
-      'c++': { desc: 'Systemnah: Pipes, Prozesse und Speicher selbst verwalten.' },
+      'c++': {
+        desc: 'Systemnah: Pipes, Prozesse und Speicher selbst verwalten.',
+        did: 'mysh, eine eigene Unix-Shell mit Pipes, Umleitungen, Aliasen und Tab-Vervollständigung. Startzeit mit hyperfine gemessen, Speicher mit Valgrind geprüft.',
+        likes: 'Man sieht genau, was das Betriebssystem tut: fork, exec, Dateideskriptoren. Nichts passiert hinter dem Rücken.',
+      },
 
-      gin: { desc: 'Schlanker HTTP-Router für Go, ohne viel Magie.' },
+      gin: {
+        desc: 'Schlanker HTTP-Router für Go, ohne viel Magie.',
+        did: 'Die REST-API von VentoryGo: Routing, Middleware für Sessions und Mandantentrennung.',
+        likes: 'Schnell eingerichtet und nah an net/http. Middleware bleibt einfache Go-Funktionen.',
+      },
       'spring boot': {
         desc: 'Für größere Java-Dienste mit DI, REST und Sicherheit.',
-        art: [
-          ' ████ ████  ████   ███  █   █  ████       ████   ███   ███  █████',
-          '█     █   █ █   █   █   ██  █ █           █   █ █   █ █   █   █',
-          ' ███  ████  ████    █   █ █ █ █  ██       ████  █   █ █   █   █',
-          '    █ █     █  █    █   █  ██ █   █       █   █ █   █ █   █   █',
-          '████  █     █   █  ███  █   █  ████       ████   ███   ███    █',
-        ],
+        did: 'Die Sync-API des Activity Trackers mit Keycloak-Anbindung, im Team mit sechs Personen.',
+        likes: 'Für vieles gibt es einen erprobten Weg. Dependency Injection und Spring Security nehmen einem viel Boilerplate ab.',
       },
-      postgresql: { desc: 'Relationale Datenbank mit Transaktionen und sauberem SQL.' },
-      sqlite: { desc: 'Dateibasierte Datenbank für lokale Tools und kleine Dienste.' },
+      postgresql: {
+        desc: 'Relationale Datenbank mit Transaktionen und sauberem SQL.',
+        did: 'Die Datenbank hinter VentoryGo, unter anderem für lückenlose Rechnungsnummern pro Nutzer und Jahr, und der Server-Speicher im Activity Tracker.',
+        likes: 'Transaktionen und Constraints, auf die man sich verlassen kann. Viele Regeln lassen sich direkt im Schema absichern.',
+      },
+      sqlite: {
+        desc: 'Dateibasierte Datenbank für lokale Tools und kleine Dienste.',
+        did: 'Der lokale Speicher von Kairo und der Offline-Speicher auf dem Android-Client des Activity Trackers.',
+        likes: 'Eine Datei, kein Server, trotzdem echtes SQL. Ideal für Anwendungen, die ohne Cloud auskommen sollen.',
+      },
       keycloak: {
         desc: 'Identity-Provider für Login, Rollen und SSO.',
-        art: [
-          '█   █ █████ █   █  ████ █      ███   ███  █   █',
-          '█  █  █      █ █  █     █     █   █ █   █ █  █',
-          '███   ████    █   █     █     █   █ █████ ███',
-          '█  █  █       █   █     █     █   █ █   █ █  █',
-          '█   █ █████   █    ████ █████  ███  █   █ █   █',
-        ],
+        did: 'Login und Rollen für den Activity Tracker, angebunden an die Spring-Boot-API.',
+        likes: 'Authentifizierung muss man nicht selbst bauen. OAuth2 und OpenID Connect laufen nach Standard.',
       },
 
-      docker: { desc: 'Container für reproduzierbare Builds und Läufe.' },
+      docker: {
+        desc: 'Container für reproduzierbare Builds und Läufe.',
+        did: 'Entwicklungs- und Deploy-Umgebungen für VentoryGo und den Activity Tracker, mit Datenbank per Compose.',
+        likes: 'Ein Befehl und die komplette Umgebung läuft, auf jedem Rechner gleich.',
+      },
       'ci/cd': {
         desc: 'GitHub Actions: Build, Tests und Deploy automatisch.',
-        art: [
-          ' ████  ███      █  ████ ████',
-          '█       █      █  █     █   █',
-          '█       █     █   █     █   █',
-          '█       █    █    █     █   █',
-          ' ████  ███  █      ████ ████',
-        ],
+        did: 'Pipelines für Build und Tests in VentoryGo und yawntest sowie signierte Android-Releases im Activity Tracker.',
+        likes: 'Fehler fallen beim Push auf und nicht erst beim Release.',
       },
 
       neovim: {
         desc: 'Mein Editor: LSP, Suche und alles über Tastenkürzel.',
-        art: [
-          '█   █ █████  ███  █   █  ███  █   █',
-          '██  █ █     █   █ █   █   █   ██ ██',
-          '█ █ █ ████  █   █ █   █   █   █ █ █',
-          '█  ██ █     █   █  █ █    █   █   █',
-          '█   █ █████  ███    █    ███  █   █',
-        ],
+        did: 'Meine eigene Konfiguration mit LSP für Go, Java und C++, Fuzzy-Suche und Git-Integration.',
+        likes: 'Die Hände bleiben auf der Tastatur und der Editor passt sich mir an, nicht umgekehrt.',
       },
       tmux: {
         desc: 'Sitzungen und Fenster, die einen SSH-Abbruch überleben.',
-        art: [
-          '█████ █   █ █   █ █   █',
-          '  █   ██ ██ █   █  █ █',
-          '  █   █ █ █ █   █   █',
-          '  █   █   █ █   █  █ █',
-          '  █   █   █  ███  █   █',
-        ],
+        did: 'Eine Sitzung pro Projekt mit Editor, Server und Logs nebeneinander. Diese Seite ist danach gestaltet.',
+        likes: 'Man kann eine Sitzung verlassen und später genau dort weitermachen, wo man aufgehört hat.',
       },
       ghostty: {
         desc: 'Schnelles Terminal mit GPU-Rendering.',
-        art: [
-          ' ████ █   █  ███   ████ █████ █████ █   █',
-          '█     █   █ █   █ █       █     █    █ █',
-          '█  ██ █████ █   █  ███    █     █     █',
-          '█   █ █   █ █   █     █   █     █     █',
-          ' ████ █   █  ███  ████    █     █     █',
-        ],
+        did: 'Mein tägliches Terminal, eingerichtet mit JetBrains Mono und einem dunklen Theme.',
+        likes: 'Schnell, schlicht und mit sinnvollen Standardeinstellungen.',
       },
       yazi: {
         desc: 'Dateimanager für schnelles Navigieren im Terminal.',
-        art: [
-          '█   █  ███  █████  ███',
-          ' █ █  █   █    █    █',
-          '  █   █████   █     █',
-          '  █   █   █  █     █',
-          '  █   █   █ █████  ███',
-        ],
+        did: 'Zum Durchsuchen von Projekten und Logs, ohne das Terminal zu verlassen.',
+        likes: 'Vorschau für Dateien und Bilder direkt im Terminal und Vim-Tastenkürzel.',
       },
     },
   },
@@ -292,7 +276,7 @@ export function usedIn(file: string): string[] {
       Object.values(project.meta).some((value) =>
         value
           .toLowerCase()
-          .split(', ')
+          .split(/\s*[,·]\s*/)
           .includes(file),
       ),
     )

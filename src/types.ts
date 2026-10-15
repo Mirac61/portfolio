@@ -58,8 +58,9 @@ export interface Content {
   stack: {
     title: string;
     groups: { folder: string; files: string[] }[];
-    // Beschreibung je Eintrag (Ordner oder Datei). art = Mono-Grafik, credit = Quelle
-    info: Record<string, { desc: string; art?: string[]; credit?: string }>;
+    // desc = Zeile im ls-Listing; did/likes = Absätze in der Detailansicht einer Datei.
+    // Das ASCII-Logo kommt aus src/images/<name>_logo.txt
+    info: Record<string, { desc: string; did?: string; likes?: string }>;
   };
   readme: {
     title: string;

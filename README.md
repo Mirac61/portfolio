@@ -25,11 +25,11 @@ Alle Texte stehen in **`src/content.ts`**. Für Inhaltsänderungen muss keine an
 | Überschrift, Fakten, Status „werkstudent: offen“ | `profile` |
 | Mail, GitHub, LinkedIn | `profile.links` |
 | Projekte | `projects.items` |
-| Technologien (Verzeichnis-Listing, Texte, ASCII-Grafiken) | `stack` |
-
-Alle Inhalte stehen in `src/content.ts`. Für Stack-ASCII-Art und offene Bilder siehe auch `docs/ascii-art.md`.
+| Technologien (Verzeichnis-Listing, Texte) | `stack` |
 | Texte im Readme-Fenster | `readme.sections` |
 | Statuszeile unten | `footer` |
+
+Die ASCII-Logos im Stack liegen in `src/images/*_logo.txt`, siehe `docs/ascii-art.md`.
 
 Ein leerer String (`''`) blendet das Feld aus. Das gilt für Links, den Projektstatus und die Repo-URL. Der erste sichtbare Link erscheint auf der Startseite als lila Button.
 

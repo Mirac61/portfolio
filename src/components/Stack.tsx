@@ -1,6 +1,6 @@
 import { Pane } from "./Pane";
 import { SelectList } from "./SelectList";
-import { content, usedIn } from "../content";
+import { content, stackArt, usedIn } from "../content";
 
 const { stack } = content;
 
@@ -64,6 +64,7 @@ export function StackMain({
   if (level === 2) {
     const info = stack.info[file];
     const used = usedIn(file);
+    const art = stackArt(file);
     return (
       <div className="stack-cd">
         <div className="cd-head">
@@ -76,32 +77,35 @@ export function StackMain({
           </button>
         </div>
 
-        <div className="stack-slot mt-3">
-          {/* 1. ASCII-Art: Mittig ausgerichtet & etwas größer */}
-          {info?.art && (
-            <div className="flex justify-center my-2">
-              <pre
-                className="ascii-art font-mono whitespace-pre text-center bg-[image:linear-gradient(135deg,#6d28d9_0%,#8b5cf6_45%,#c4b5fd_100%)] bg-clip-text text-transparent"
-                style={{ fontSize: "8.5px", lineHeight: "1.1" }}
-              >
-                {Array.isArray(info.art) ? info.art.join("\n") : info.art}
-              </pre>
-            </div>
+        <div className="stack-slot">
+          {art && (
+            <pre className="stack-art" aria-hidden="true">
+              {art.join("\n")}
+            </pre>
           )}
 
-          {/* 2. Feine Trennlinie */}
-          {info?.art && (
-            <div className="border-b border-neutral-200 dark:border-neutral-800/80 my-4" />
-          )}
-
-          {/* 3. Beschreibung & 'genutzt in' darunter */}
-          {info ? <p className="stack-desc">{info.desc}</p> : null}
-          {used.length > 0 && (
-            <p className="stack-used mt-2">
-              <span className="stack-used-label">genutzt in</span>{" "}
-              {used.join(", ")}
-            </p>
-          )}
+          <div className="stack-text">
+            <h2 className="stack-name">{file}</h2>
+            {info?.desc && <p className="stack-desc">{info.desc}</p>}
+            {info?.did && (
+              <section className="stack-note">
+                <h3 className="stack-note-head"># was ich damit gemacht habe</h3>
+                <p className="stack-desc">{info.did}</p>
+              </section>
+            )}
+            {info?.likes && (
+              <section className="stack-note">
+                <h3 className="stack-note-head"># was ich daran mag</h3>
+                <p className="stack-desc">{info.likes}</p>
+              </section>
+            )}
+            {used.length > 0 && (
+              <p className="stack-used">
+                <span className="stack-used-label">genutzt in</span>{" "}
+                {used.join(", ")}
+              </p>
+            )}
+          </div>
         </div>
 
         <p className="cd-hint">

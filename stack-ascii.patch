@@ -1,0 +1,1230 @@
+diff --git a/README.md b/README.md
+index bb6fbce..7c3a095 100644
+--- a/README.md
++++ b/README.md
+@@ -25,12 +25,12 @@ Alle Texte stehen in **`src/content.ts`**. Für Inhaltsänderungen muss keine an
+ | Überschrift, Fakten, Status „werkstudent: offen“ | `profile` |
+ | Mail, GitHub, LinkedIn | `profile.links` |
+ | Projekte | `projects.items` |
+-| Technologien (Verzeichnis-Listing, Texte, ASCII-Grafiken) | `stack` |
+-
+-Alle Inhalte stehen in `src/content.ts`. Für Stack-ASCII-Art und offene Bilder siehe auch `docs/ascii-art.md`.
++| Technologien (Verzeichnis-Listing, Texte) | `stack` |
+ | Texte im Readme-Fenster | `readme.sections` |
+ | Statuszeile unten | `footer` |
+ 
++Die ASCII-Logos im Stack liegen in `src/images/*_logo.txt`, siehe `docs/ascii-art.md`.
++
+ Ein leerer String (`''`) blendet das Feld aus. Das gilt für Links, den Projektstatus und die Repo-URL. Der erste sichtbare Link erscheint auf der Startseite als lila Button.
+ 
+ ### Projekt hinzufügen
+diff --git a/TODO.md b/TODO.md
+index 3486b4e..8ce001e 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -1,7 +1,5 @@
+ TODO
+ 
+-- ASCII Art selber generieren oder finden für die ICons
+-- Die Darstellung anpassen, sodass das Bild oben, dasnn der Titel und dann eine gute beschreibung da ist
+-- Text fixen
++- Text fixen (Stack: did/likes in content.ts in eigenen Worten)
+ - Bilder größer und schönere Darstellung
+-- 
+\ No newline at end of file
++- Lint-Fehler in Projects.tsx: useThemeMediaSrc wird bedingt aufgerufen
+diff --git a/docs/ascii-art.md b/docs/ascii-art.md
+index 94157c5..b899b0f 100644
+--- a/docs/ascii-art.md
++++ b/docs/ascii-art.md
+@@ -1,36 +1,23 @@
+ # ASCII-Art im Stack
+ 
+-Das `stack`-Fenster zeigt die ASCII-Bilder im Platzhalter-Slot der Detailansicht, also nach dem `cd` in einen Eintrag.
++Das `stack`-Fenster zeigt nach dem `cd` in einen Eintrag oben ein ASCII-Logo und darunter den Text aus `content.ts` (`desc`, `did`, `likes`). Das Logo wird per CSS im Lila des Profil-Banners eingefärbt und folgt dem Theme.
+ 
+-## Status
++## Dateien
+ 
+-| Eintrag | Quelle / Lizenz | Notiz |
+-|---|---|---|
+-| java | selbst gezeichnet | Block-Wortmarke, Interim |
+-| kotlin | selbst gezeichnet | Block-Wortmarke, Interim |
+-| spring boot | selbst gezeichnet | Block-Wortmarke, Interim |
+-| keycloak | selbst gezeichnet | Block-Wortmarke, Interim |
+-| ci/cd | selbst gezeichnet | Block-Wortmarke, Interim |
+-| neovim | selbst gezeichnet | Block-Wortmarke, Interim |
+-| tmux | selbst gezeichnet | Block-Wortmarke, Interim |
+-| ghostty | selbst gezeichnet | Block-Wortmarke, Interim |
+-| yazi | selbst gezeichnet | Block-Wortmarke, Interim |
++Jedes Logo liegt als Textdatei in `src/images/<name>_logo.txt`. Sonderzeichen im Namen werden zu `_`, also `spring boot` → `spring_boot_logo.txt`, `c++` → `c__logo.txt`, `ci/cd` → `ci_cd_logo.txt`. Fehlt die Datei, bleibt die Fläche einfach leer.
+ 
+-## Offen: echte ASCII-Bilder
++| Eintrag | Quelle |
++|---|---|
++| go | von Hand, `go_logo.txt` |
++| java, kotlin, c++, gin, spring boot, postgresql, sqlite, keycloak, docker, ci/cd (GitHub Actions), neovim, tmux, ghostty | Logo aus [simple-icons](https://simpleicons.org) (CC0), mit `scripts/ascii-logos.mjs` umgewandelt |
++| yazi | kein Logo in simple-icons, Schriftzug in JetBrains Mono, ebenfalls aus dem Skript |
+ 
+-Diese Einträge haben aktuell eine Block-Wortmarke als Platzhalter. Hier sollten später echte, wiedererkennbare ASCII-Art-Bilder hin:
++## Neu erzeugen
+ 
+-- [ ] `java` – z. B. Kaffeetasse
+-- [ ] `kotlin` – z. B. Kotlin-Logo
+-- [ ] `spring boot` – z. B. Feder / Blatt
+-- [ ] `keycloak` – z. B. Schlüssel
+-- [ ] `ci/cd` – z. B. Pipeline-Pfeile
+-- [ ] `neovim` – z. B. Editor-Fenster / Neovim-Logo
+-- [ ] `tmux` – z. B. geteilte Fenster
+-- [ ] `ghostty` – z. B. Terminal-Fenster
+-- [ ] `yazi` – z. B. Dateimanager-Baum
++```bash
++node scripts/ascii-logos.mjs
++# falls Playwrights eigener Browser fehlt:
++CHROMIUM_PATH=/pfad/zu/chrome node scripts/ascii-logos.mjs
++```
+ 
+-## Quellen
+-
+-- Block-Wortmarken: selbst gezeichnet aus einem 5×n-Block-Alphabet; keine Lizenzabhängigkeiten.
+-- Projektbilder: siehe `src/content.ts` und `public/media/`.
++Das Skript überschreibt alle Logos außer `go_logo.txt`. Breite (`cols`) und Zeichenrampe (` .:-=`, wie beim Go-Logo) stehen oben im Skript. Eine Datei lässt sich danach auch von Hand nachbessern. Dann den Eintrag aus `logos` im Skript nehmen, damit sie beim nächsten Lauf nicht überschrieben wird.
+diff --git a/package-lock.json b/package-lock.json
+index 756136d..41015ea 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -18,6 +18,7 @@
+         "@vitejs/plugin-react": "^6.1.1",
+         "oxlint": "^1.81.0",
+         "playwright": "^1.64.0",
++        "simple-icons": "^16.35.0",
+         "typescript": "~6.0.2",
+         "vite": "^8.3.0"
+       }
+@@ -159,9 +160,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -179,9 +177,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -199,9 +194,6 @@
+         "ppc64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -219,9 +211,6 @@
+         "riscv64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -239,9 +228,6 @@
+         "riscv64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -259,9 +245,6 @@
+         "s390x"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -279,9 +262,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -299,9 +279,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -489,9 +466,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -509,9 +483,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -529,9 +500,6 @@
+         "ppc64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -549,9 +517,6 @@
+         "s390x"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -569,9 +534,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -589,9 +551,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -912,9 +871,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -936,9 +892,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -960,9 +913,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -984,9 +934,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -1249,6 +1196,26 @@
+       "integrity": "sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw==",
+       "license": "MIT"
+     },
++    "node_modules/simple-icons": {
++      "version": "16.35.0",
++      "resolved": "https://registry.npmjs.org/simple-icons/-/simple-icons-16.35.0.tgz",
++      "integrity": "sha512-TCfl/2+GTrx0nCo4pEWGvxhOb8c6NsqOU1OpwjtF4lwJAthB8IYVD0fuIMjLMg6JFuG1YBO0t1iETQqJLqkoJA==",
++      "dev": true,
++      "funding": [
++        {
++          "type": "opencollective",
++          "url": "https://opencollective.com/simple-icons"
++        },
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/simple-icons"
++        }
++      ],
++      "license": "CC0-1.0",
++      "engines": {
++        "node": ">=0.12.18"
++      }
++    },
+     "node_modules/source-map-js": {
+       "version": "1.2.2",
+       "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
+diff --git a/package.json b/package.json
+index e90b8ca..43728dc 100644
+--- a/package.json
++++ b/package.json
+@@ -20,6 +20,7 @@
+     "@vitejs/plugin-react": "^6.1.1",
+     "oxlint": "^1.81.0",
+     "playwright": "^1.64.0",
++    "simple-icons": "^16.35.0",
+     "typescript": "~6.0.2",
+     "vite": "^8.3.0"
+   }
+diff --git a/scripts/ascii-logos.mjs b/scripts/ascii-logos.mjs
+new file mode 100644
+index 0000000..942a9e7
+--- /dev/null
++++ b/scripts/ascii-logos.mjs
+@@ -0,0 +1,106 @@
++import { readFileSync, writeFileSync } from 'node:fs';
++import { chromium } from 'playwright';
++
++// turns the simple-icons logos into ascii art in the style of src/images/go_logo.txt
++// usage: node scripts/ascii-logos.mjs   (writes src/images/<name>_logo.txt, go stays hand-made)
++// CHROMIUM_PATH=/path/to/chrome overrides playwright's bundled browser
++const iconDir = 'node_modules/simple-icons/icons/';
++
++// stack entry -> simple-icons slug; entries without a logo are rendered as a wordmark
++const logos = {
++  java: 'openjdk',
++  kotlin: 'kotlin',
++  'c++': 'cplusplus',
++  gin: 'gin',
++  'spring boot': 'springboot',
++  postgresql: 'postgresql',
++  sqlite: 'sqlite',
++  keycloak: 'keycloak',
++  docker: 'docker',
++  'ci/cd': 'githubactions',
++  neovim: 'neovim',
++  tmux: 'tmux',
++  ghostty: 'ghostty',
++  yazi: null,
++};
++
++// columns of the result; a mono cell is ~0.6em wide and 1.1em tall (line-height of the art)
++const cols = 44;
++const cellAspect = 0.6 / 1.1;
++// light -> dense, same characters as the go logo
++const ramp = [' ', '.', ':', '-', '='];
++
++const font = readFileSync('public/fonts/JetBrainsMono-Bold.woff2').toString('base64');
++
++const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
++const page = await browser.newPage();
++
++for (const [name, slug] of Object.entries(logos)) {
++  const svg = slug ? readFileSync(`${iconDir}${slug}.svg`, 'utf8') : null;
++  const rows = await page.evaluate(
++    async ({ svg, word, font, cols, cellAspect, ramp }) => {
++      // 8x8 samples per cell, coverage decides the character
++      const sub = 8;
++      const canvas = document.createElement('canvas');
++      const ctx = canvas.getContext('2d', { willReadFrequently: true });
++      let lines;
++      if (svg) {
++        const img = new Image();
++        img.src = `data:image/svg+xml;base64,${btoa(svg)}`;
++        await img.decode();
++        // simple-icons are 24x24, square: rows follow from the cell aspect
++        const lineCount = Math.round(cols * cellAspect);
++        canvas.width = cols * sub;
++        canvas.height = lineCount * sub;
++        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
++        lines = lineCount;
++      } else {
++        // wordmark in the portfolio's own bold mono font
++        const face = new FontFace('Wordmark', `url(data:font/woff2;base64,${font})`);
++        document.fonts.add(await face.load());
++        const lineCount = 14;
++        canvas.width = Math.round(cols * 1.3) * sub;
++        canvas.height = lineCount * sub;
++        ctx.font = `700 ${canvas.height * 1.05}px Wordmark`;
++        ctx.textBaseline = 'middle';
++        ctx.textAlign = 'center';
++        // a cell is taller than wide: stretch y so the letters keep their shape
++        const scale = Math.min(1, canvas.width / (ctx.measureText(word).width * 1.05));
++        ctx.setTransform(scale, 0, 0, scale / cellAspect / 1.6, canvas.width / 2, canvas.height / 2);
++        ctx.fillText(word, 0, 0);
++        lines = lineCount;
++      }
++      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
++      const out = [];
++      const width = canvas.width / sub;
++      for (let y = 0; y < lines; y++) {
++        let line = '';
++        for (let x = 0; x < width; x++) {
++          let sum = 0;
++          for (let sy = 0; sy < sub; sy++) {
++            for (let sx = 0; sx < sub; sx++) {
++              sum += data[((y * sub + sy) * canvas.width + x * sub + sx) * 4 + 3];
++            }
++          }
++          const coverage = sum / (sub * sub * 255);
++          line += ramp[Math.min(ramp.length - 1, Math.round(coverage * (ramp.length - 1) + 0.15))];
++        }
++        out.push(line.replace(/\s+$/, ''));
++      }
++      return out;
++    },
++    { svg, word: name, font, cols, cellAspect, ramp },
++  );
++
++  // drop empty rows at top and bottom, and the common left indent
++  while (rows.length && !rows[0].trim()) rows.shift();
++  while (rows.length && !rows.at(-1).trim()) rows.pop();
++  const indent = Math.min(...rows.filter((row) => row.trim()).map((row) => row.match(/^ */)[0].length));
++  const art = rows.map((row) => row.slice(indent)).join('\n');
++
++  const file = `src/images/${name.replace(/[^a-z0-9]+/g, '_')}_logo.txt`;
++  writeFileSync(file, `${art}\n`);
++  console.log(`${file}\n${art}\n`);
++}
++
++await browser.close();
+diff --git a/src/App.css b/src/App.css
+index a365f81..287d1c1 100644
+--- a/src/App.css
++++ b/src/App.css
+@@ -986,26 +986,59 @@ button {
+   border-color: var(--border-ghost-hover);
+ }
+ 
++/* cd'd in: logo on top, then name and the notes underneath */
++.stack-slot {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: 32px;
++}
++
++/* ascii logo in the banner's lilac, the light end of the ramp is skipped so it stays purple */
++.stack-art {
++  margin: 0;
++  max-width: 100%;
++  font-family: var(--mono);
++  /* the go logo is ~85 columns, the others ~44: this keeps both inside the pane */
++  font-size: clamp(6px, 1.4cqi, 12px);
++  line-height: 1.1;
++  white-space: pre;
++  overflow-x: auto;
++  background: linear-gradient(135deg, var(--banner-3), var(--banner-6));
++  -webkit-background-clip: text;
++  background-clip: text;
++  color: transparent;
++}
++
++.stack-text {
++  display: flex;
++  flex-direction: column;
++  gap: 16px;
++  width: 100%;
++  max-width: 60ch;
++}
++
+ .stack-name {
+-  margin-bottom: 16px;
+   font-size: 20px;
+   font-weight: 700;
+   line-height: 1.3;
++  color: var(--accent-text);
+ }
+ 
+-/* the slot mirac fills with his own per-entry detail view later */
+-.stack-slot {
++.stack-note {
+   display: flex;
+   flex-direction: column;
+-  align-items: flex-start;
+-  gap: 16px;
++  gap: 4px;
+ }
+ 
+-.stack-slot .stack-art {
+-  font-size: clamp(8px, 2cqw, 20px);
++.stack-note-head {
++  font-size: 12px;
++  font-weight: 400;
++  color: var(--text-hash);
+ }
+ 
+ .stack-used {
++  font-size: 12px;
+   color: var(--text-dim);
+ }
+ 
+@@ -1019,29 +1052,6 @@ button {
+   color: var(--text-hash);
+ }
+ 
+-/* ascii art: inside the slot, scaled to the pane width */
+-.stack-art {
+-  margin: 0;
+-  max-width: 100%;
+-  color: var(--text);
+-  font-family: var(--mono);
+-  font-size: clamp(8px, 2.5cqw, 24px);
+-  /* line-height 1: the block glyphs tile seamlessly, no fugue lines in the art */
+-  line-height: 1;
+-  white-space: pre;
+-  overflow-x: auto;
+-  /* same-colour halo fills the antialiasing seams between block glyphs */
+-  text-shadow: 0 0 1px currentColor;
+-}
+-
+-.dark .ascii-art {
+-  filter: drop-shadow(0 0 14px rgba(139, 92, 246, 0.45));
+-}
+-
+-.stack-art code {
+-  font: inherit;
+-}
+-
+ /* ===================================================================
+    Readme
+    =================================================================== */
+diff --git a/src/components/Stack.tsx b/src/components/Stack.tsx
+index d3dcc31..ab2ae90 100644
+--- a/src/components/Stack.tsx
++++ b/src/components/Stack.tsx
+@@ -1,6 +1,6 @@
+ import { Pane } from "./Pane";
+ import { SelectList } from "./SelectList";
+-import { content, usedIn } from "../content";
++import { content, stackArt, usedIn } from "../content";
+ 
+ const { stack } = content;
+ 
+@@ -64,6 +64,7 @@ export function StackMain({
+   if (level === 2) {
+     const info = stack.info[file];
+     const used = usedIn(file);
++    const art = stackArt(file);
+     return (
+       <div className="stack-cd">
+         <div className="cd-head">
+@@ -76,32 +77,35 @@ export function StackMain({
+           </button>
+         </div>
+ 
+-        <div className="stack-slot mt-3">
+-          {/* 1. ASCII-Art: Mittig ausgerichtet & etwas größer */}
+-          {info?.art && (
+-            <div className="flex justify-center my-2">
+-              <pre
+-                className="ascii-art font-mono whitespace-pre text-center bg-[image:linear-gradient(135deg,#6d28d9_0%,#8b5cf6_45%,#c4b5fd_100%)] bg-clip-text text-transparent"
+-                style={{ fontSize: "8.5px", lineHeight: "1.1" }}
+-              >
+-                {Array.isArray(info.art) ? info.art.join("\n") : info.art}
+-              </pre>
+-            </div>
++        <div className="stack-slot">
++          {art && (
++            <pre className="stack-art" aria-hidden="true">
++              {art.join("\n")}
++            </pre>
+           )}
+ 
+-          {/* 2. Feine Trennlinie */}
+-          {info?.art && (
+-            <div className="border-b border-neutral-200 dark:border-neutral-800/80 my-4" />
+-          )}
+-
+-          {/* 3. Beschreibung & 'genutzt in' darunter */}
+-          {info ? <p className="stack-desc">{info.desc}</p> : null}
+-          {used.length > 0 && (
+-            <p className="stack-used mt-2">
+-              <span className="stack-used-label">genutzt in</span>{" "}
+-              {used.join(", ")}
+-            </p>
+-          )}
++          <div className="stack-text">
++            <h2 className="stack-name">{file}</h2>
++            {info?.desc && <p className="stack-desc">{info.desc}</p>}
++            {info?.did && (
++              <section className="stack-note">
++                <h3 className="stack-note-head"># was ich damit gemacht habe</h3>
++                <p className="stack-desc">{info.did}</p>
++              </section>
++            )}
++            {info?.likes && (
++              <section className="stack-note">
++                <h3 className="stack-note-head"># was ich daran mag</h3>
++                <p className="stack-desc">{info.likes}</p>
++              </section>
++            )}
++            {used.length > 0 && (
++              <p className="stack-used">
++                <span className="stack-used-label">genutzt in</span>{" "}
++                {used.join(", ")}
++              </p>
++            )}
++          </div>
+         </div>
+ 
+         <p className="cd-hint">
+diff --git a/src/content.ts b/src/content.ts
+index 8831cbb..4542c04 100644
+--- a/src/content.ts
++++ b/src/content.ts
+@@ -1,7 +1,15 @@
+ // Alle Texte der Seite. Nur diese Datei anfassen, um Inhalte zu ändern.
+ // Leere Strings ('') werden nicht angezeigt. Bilder liegen in public/media.
+ import type { Content, StackRow } from './types';
+-import goASCII from "./images/go_logo.txt?raw";
++
++// ASCII-Logos: src/images/<name>_logo.txt, z.B. "spring boot" -> spring_boot_logo.txt.
++// go ist von Hand gemacht, die übrigen erzeugt scripts/ascii-logos.mjs.
++const logoFiles = import.meta.glob<string>('./images/*_logo.txt', { query: '?raw', import: 'default', eager: true });
++
++export function stackArt(name: string): string[] | undefined {
++  const art = logoFiles[`./images/${name.replace(/[^a-z0-9]+/g, '_')}_logo.txt`];
++  return art ? art.replace(/\s+$/, '').split(/\r?\n/) : undefined;
++}
+ 
+ export const content: Content = {
+   // Kasten oben links in der tmux-Leiste
+@@ -136,10 +144,9 @@ export const content: Content = {
+   },
+ 
+   // 2: Stack als Verzeichnis: Sidebar = Ordner, Haupt-Pane = `ls`-Listing des
+-  // Ordners. Enter oder Klick auf eine Datei = `cd` hinein (Detailansicht,
+-  // aktuell ein Platzhalter-Slot), esc oder cd .. zurück. Ein Eintrag, der
+-  // in den meta-Werten eines Projekts vorkommt, bekommt "# projektname" dahinter.
+-  // `info` liefert Text und ASCII-Grafik für den Slot.
++  // Ordners. Enter oder Klick auf eine Datei = `cd` hinein (Detailansicht mit
++  // ASCII-Logo und Text), esc oder cd .. zurück. Ein Eintrag, der in den
++  // meta-Werten eines Projekts vorkommt, bekommt "# projektname" dahinter.
+   stack: {
+     title: 'stack',
+     groups: [
+@@ -154,107 +161,84 @@ export const content: Content = {
+       infra: { desc: 'Bauen, testen und ausliefern.' },
+       tools: { desc: 'Mein Terminal-Alltag.' },
+ 
++      // desc = eine Zeile fürs ls-Listing, did/likes = Text in der Detailansicht
+       go: {
+-        desc: 'Meine Hauptsprache im Backend. Ganzzahlige Cents, klare Nebenläufigkeit, schnelle Builds.',
+-        art: goASCII.trim().split(/\r?\n/),
++        desc: 'Meine Hauptsprache im Backend.',
++        did: 'Das Backend von VentoryGo mit Gin und PostgreSQL, Kairo mit SQLite und yawntest, ein Tool, das aus Go-Code automatisch Tests erzeugt. Go habe ich mir selbst beigebracht.',
++        likes: 'Wenig Magie, schnelle Builds und eine Standardbibliothek, mit der man ohne Abhängigkeiten weit kommt. Fehler sind normale Rückgabewerte und damit immer sichtbar.',
+       },
+       java: {
+         desc: 'Aus dem Studium und für Spring-Boot-Dienste.',
+-        art: [
+-          '  ███  ███  █   █  ███',
+-          '   █  █   █ █   █ █   █',
+-          '   █  █████ █   █ █████',
+-          '█  █  █   █  █ █  █   █',
+-          ' ██   █   █   █   █   █',
+-        ],
++        did: 'Die Grundlagen der Objektorientierung im Studium und die Spring-Boot-API im Activity Tracker.',
++        likes: 'Das ausgereifte Ökosystem und eine Typisierung, die auch in großen Codebasen den Überblick hält.',
+       },
+       kotlin: {
+         desc: 'Moderne JVM-Sprache, wenn Java zu ausführlich wird.',
+-        art: [
+-          '█   █  ███  █████ █      ███  █   █',
+-          '█  █  █   █   █   █       █   ██  █',
+-          '███   █   █   █   █       █   █ █ █',
+-          '█  █  █   █   █   █       █   █  ██',
+-          '█   █  ███    █   █████  ███  █   █',
+-        ],
++        did: 'Den Android-Client des Activity Trackers, inklusive Offline-Sync über WorkManager und der Statistik-Ansicht.',
++        likes: 'Null-Sicherheit im Typsystem, Data Classes und Coroutines statt verschachtelter Callbacks.',
++      },
++      'c++': {
++        desc: 'Systemnah: Pipes, Prozesse und Speicher selbst verwalten.',
++        did: 'mysh, eine eigene Unix-Shell mit Pipes, Umleitungen, Aliasen und Tab-Vervollständigung. Startzeit mit hyperfine gemessen, Speicher mit Valgrind geprüft.',
++        likes: 'Man sieht genau, was das Betriebssystem tut: fork, exec, Dateideskriptoren. Nichts passiert hinter dem Rücken.',
+       },
+-      'c++': { desc: 'Systemnah: Pipes, Prozesse und Speicher selbst verwalten.' },
+ 
+-      gin: { desc: 'Schlanker HTTP-Router für Go, ohne viel Magie.' },
++      gin: {
++        desc: 'Schlanker HTTP-Router für Go, ohne viel Magie.',
++        did: 'Die REST-API von VentoryGo: Routing, Middleware für Sessions und Mandantentrennung.',
++        likes: 'Schnell eingerichtet und nah an net/http. Middleware bleibt einfache Go-Funktionen.',
++      },
+       'spring boot': {
+         desc: 'Für größere Java-Dienste mit DI, REST und Sicherheit.',
+-        art: [
+-          ' ████ ████  ████   ███  █   █  ████       ████   ███   ███  █████',
+-          '█     █   █ █   █   █   ██  █ █           █   █ █   █ █   █   █',
+-          ' ███  ████  ████    █   █ █ █ █  ██       ████  █   █ █   █   █',
+-          '    █ █     █  █    █   █  ██ █   █       █   █ █   █ █   █   █',
+-          '████  █     █   █  ███  █   █  ████       ████   ███   ███    █',
+-        ],
++        did: 'Die Sync-API des Activity Trackers mit Keycloak-Anbindung, im Team mit sechs Personen.',
++        likes: 'Für vieles gibt es einen erprobten Weg. Dependency Injection und Spring Security nehmen einem viel Boilerplate ab.',
++      },
++      postgresql: {
++        desc: 'Relationale Datenbank mit Transaktionen und sauberem SQL.',
++        did: 'Die Datenbank hinter VentoryGo, unter anderem für lückenlose Rechnungsnummern pro Nutzer und Jahr, und der Server-Speicher im Activity Tracker.',
++        likes: 'Transaktionen und Constraints, auf die man sich verlassen kann. Viele Regeln lassen sich direkt im Schema absichern.',
++      },
++      sqlite: {
++        desc: 'Dateibasierte Datenbank für lokale Tools und kleine Dienste.',
++        did: 'Der lokale Speicher von Kairo und der Offline-Speicher auf dem Android-Client des Activity Trackers.',
++        likes: 'Eine Datei, kein Server, trotzdem echtes SQL. Ideal für Anwendungen, die ohne Cloud auskommen sollen.',
+       },
+-      postgresql: { desc: 'Relationale Datenbank mit Transaktionen und sauberem SQL.' },
+-      sqlite: { desc: 'Dateibasierte Datenbank für lokale Tools und kleine Dienste.' },
+       keycloak: {
+         desc: 'Identity-Provider für Login, Rollen und SSO.',
+-        art: [
+-          '█   █ █████ █   █  ████ █      ███   ███  █   █',
+-          '█  █  █      █ █  █     █     █   █ █   █ █  █',
+-          '███   ████    █   █     █     █   █ █████ ███',
+-          '█  █  █       █   █     █     █   █ █   █ █  █',
+-          '█   █ █████   █    ████ █████  ███  █   █ █   █',
+-        ],
++        did: 'Login und Rollen für den Activity Tracker, angebunden an die Spring-Boot-API.',
++        likes: 'Authentifizierung muss man nicht selbst bauen. OAuth2 und OpenID Connect laufen nach Standard.',
+       },
+ 
+-      docker: { desc: 'Container für reproduzierbare Builds und Läufe.' },
++      docker: {
++        desc: 'Container für reproduzierbare Builds und Läufe.',
++        did: 'Entwicklungs- und Deploy-Umgebungen für VentoryGo und den Activity Tracker, mit Datenbank per Compose.',
++        likes: 'Ein Befehl und die komplette Umgebung läuft, auf jedem Rechner gleich.',
++      },
+       'ci/cd': {
+         desc: 'GitHub Actions: Build, Tests und Deploy automatisch.',
+-        art: [
+-          ' ████  ███      █  ████ ████',
+-          '█       █      █  █     █   █',
+-          '█       █     █   █     █   █',
+-          '█       █    █    █     █   █',
+-          ' ████  ███  █      ████ ████',
+-        ],
++        did: 'Pipelines für Build und Tests in VentoryGo und yawntest sowie signierte Android-Releases im Activity Tracker.',
++        likes: 'Fehler fallen beim Push auf und nicht erst beim Release.',
+       },
+ 
+       neovim: {
+         desc: 'Mein Editor: LSP, Suche und alles über Tastenkürzel.',
+-        art: [
+-          '█   █ █████  ███  █   █  ███  █   █',
+-          '██  █ █     █   █ █   █   █   ██ ██',
+-          '█ █ █ ████  █   █ █   █   █   █ █ █',
+-          '█  ██ █     █   █  █ █    █   █   █',
+-          '█   █ █████  ███    █    ███  █   █',
+-        ],
++        did: 'Meine eigene Konfiguration mit LSP für Go, Java und C++, Fuzzy-Suche und Git-Integration.',
++        likes: 'Die Hände bleiben auf der Tastatur und der Editor passt sich mir an, nicht umgekehrt.',
+       },
+       tmux: {
+         desc: 'Sitzungen und Fenster, die einen SSH-Abbruch überleben.',
+-        art: [
+-          '█████ █   █ █   █ █   █',
+-          '  █   ██ ██ █   █  █ █',
+-          '  █   █ █ █ █   █   █',
+-          '  █   █   █ █   █  █ █',
+-          '  █   █   █  ███  █   █',
+-        ],
++        did: 'Eine Sitzung pro Projekt mit Editor, Server und Logs nebeneinander. Diese Seite ist danach gestaltet.',
++        likes: 'Man kann eine Sitzung verlassen und später genau dort weitermachen, wo man aufgehört hat.',
+       },
+       ghostty: {
+         desc: 'Schnelles Terminal mit GPU-Rendering.',
+-        art: [
+-          ' ████ █   █  ███   ████ █████ █████ █   █',
+-          '█     █   █ █   █ █       █     █    █ █',
+-          '█  ██ █████ █   █  ███    █     █     █',
+-          '█   █ █   █ █   █     █   █     █     █',
+-          ' ████ █   █  ███  ████    █     █     █',
+-        ],
++        did: 'Mein tägliches Terminal, eingerichtet mit JetBrains Mono und einem dunklen Theme.',
++        likes: 'Schnell, schlicht und mit sinnvollen Standardeinstellungen.',
+       },
+       yazi: {
+         desc: 'Dateimanager für schnelles Navigieren im Terminal.',
+-        art: [
+-          '█   █  ███  █████  ███',
+-          ' █ █  █   █    █    █',
+-          '  █   █████   █     █',
+-          '  █   █   █  █     █',
+-          '  █   █   █ █████  ███',
+-        ],
++        did: 'Zum Durchsuchen von Projekten und Logs, ohne das Terminal zu verlassen.',
++        likes: 'Vorschau für Dateien und Bilder direkt im Terminal und Vim-Tastenkürzel.',
+       },
+     },
+   },
+@@ -292,7 +276,7 @@ export function usedIn(file: string): string[] {
+       Object.values(project.meta).some((value) =>
+         value
+           .toLowerCase()
+-          .split(', ')
++          .split(/\s*[,·]\s*/)
+           .includes(file),
+       ),
+     )
+diff --git a/src/images/c__logo.txt b/src/images/c__logo.txt
+new file mode 100644
+index 0000000..5ccb253
+--- /dev/null
++++ b/src/images/c__logo.txt
+@@ -0,0 +1,24 @@
++                .:-==-:.
++             .:==========:.
++          .-================-.
++       :-======================-:
++   .:-============================-:.
++ :-==========-:..      ..:===========-:
++:==========-.              .-==========:
++:========-.                  .-========:
++:=======-        .::::.       :========:
++:======-       :========:  :-==========:
++:======.      -=====================-==:
++:======      :===============- .-=-: :-:
++:======      :===============- .-=-: :-:
++:======.      -=====================-==:
++:======-       :========:  :-==========:
++:=======-        .::::.       :========:
++:========-.                  .-========:
++:==========-.              .-==========:
++ :-==========-:..      ..:===========-:
++   .:-============================-:.
++       :-======================-:
++          .-================-.
++             .:==========:.
++                .:-==-:.
+diff --git a/src/images/ci_cd_logo.txt b/src/images/ci_cd_logo.txt
+new file mode 100644
+index 0000000..2aefe7c
+--- /dev/null
++++ b/src/images/ci_cd_logo.txt
+@@ -0,0 +1,24 @@
++    .:-====--:
++  :==:..   .:-=-
++ -=:  :::     .==.
++:=:  :=--=-:   .==
++==   :=. .:==:  -=.
++==   :=. .:-=:  :=.
++:=:  :=--=-:   .==
++ -=:  :::     .==.
++  :==:..   .:-=-
++    .:-====--:.  :-====-:        .:-===--.
++       -=-     .==:.  .:-=:     -=-.   .:=-
++       -==-.  .==    .-: -=.   :=:    :-..=-
++       -=.:-====: =-:=-. :======= :=:-=:  ==
++       -=.     == .--.   -=.   :=: :-:   .=-
++       -=.     .==:.  .:-=:     -=-.   .:=-
++       -=.       :-====-:        .:-===--.
++       -=.
++       :=.       :-====-:        .:-===--.
++       .=-.    .==:.  .:-=:     -=-.   .:=-
++        .-=:. .==        -=.   :=:       .=-
++          .--===: :=  -- :=: :===         ==
++               ==        -=.   :=:       .=-
++               .==:.  .:-=:     -=-.   .:=-
++                 :-====-:        .:-===--.
+diff --git a/src/images/docker_logo.txt b/src/images/docker_logo.txt
+new file mode 100644
+index 0000000..bec67a2
+--- /dev/null
++++ b/src/images/docker_logo.txt
+@@ -0,0 +1,18 @@
++                    ----.
++                   .====:
++                    ----.
++         -===::====.====:         .
++         ====-:====.====:        :==:
++    .... ::::..:::: ::::......  .====:
++   .====.====-:====.====:-====  :=====:--::.
++   .====.====-:====.====:-====   ==========-
++.:::::::::::::::::::::::::::::::-=========:
++=====================================::..
++====================================:
++-==================================:
++.=================================:
++ -==============================-.
++  -============================:
++   :========================-.
++     :-=================-:.
++        ..::::---::::..
+diff --git a/src/images/ghostty_logo.txt b/src/images/ghostty_logo.txt
+new file mode 100644
+index 0000000..b154f9d
+--- /dev/null
++++ b/src/images/ghostty_logo.txt
+@@ -0,0 +1,24 @@
++          ..:--======--:..
++       .:-================-:.
++     .-======================-.
++    :==========================:
++  .-============================-
++  ===============================-
++ -====--==========================-
++.====:   .:-=======================.
++:=====:.    .:-=====----------=====:
++-========:     -===            ====:
++-=====-:.    .:====-::::::::::-====-
++-====:    .-=======================-
++-=====::-==========================-
++-==================================-
++-==================================-
++-==================================-
++-==================================-
++-==================================-
++-==================================-
++-==================================-
++-==================================-
++:==================================:
++ -================================-
++  .-====-:.   :-====-:   .:-====-.
+diff --git a/src/images/gin_logo.txt b/src/images/gin_logo.txt
+new file mode 100644
+index 0000000..059acf3
+--- /dev/null
++++ b/src/images/gin_logo.txt
+@@ -0,0 +1,24 @@
++                        ..::
++                       .:  -=.
++                      .:   .-=.
++                     .-   .. ==
++  . :::.........::::.::.: :-.-=:
++::.                :-......:.-=-
++.:...............-:--........-=-
++ :  ......     ....:  .:..  .==:
++ :-.         ......:    ....===
++ .:..    ..:.::.:--::::-..-===-
++  :      .: .:  ..-  ::--===::-
++         .-===---=--======:  .:
++   :       .::--------::.    ::
++   -.                        :.
++   :-      ....    .....     -.
++    =.   ..   .: .:..  .:    -
++    ::   -=-   ...-=:   :    -
++    .-.  ...  .::::......   .-
++     ::    .....:..:        .-
++     .-.       -.-:.        ::
++      :- ..    ....         :.
++      ...  ...              -
++       ::                 .-:
++        .::::..:::::::::..:.
+diff --git a/src/images/java_logo.txt b/src/images/java_logo.txt
+new file mode 100644
+index 0000000..6bdaddd
+--- /dev/null
++++ b/src/images/java_logo.txt
+@@ -0,0 +1,24 @@
++                .--.
++               :====:
++             .-======-
++            .=========-
++           .===========-
++          .=============-
++         .=====:.  ..-===-
++         -===:        .===-
++        :-..=          :-.-:
++       .=  .=          :: .=.
++      .=.   --        .=.  :=.
++    .-=-     :-:....:--     -=-.
++  :=-:=.       .::::.       .=:--:
++.=-. -:                      :- .-=.
++:=. .=                        =. .=:
++ :=.:-                        ::.=:
++  :==.                        .==:
++  .==                          ==.
++ :==-                          -==:
++ ..:-                          ::..
++   :-                          ::
++   .=                          -.
++    -:    .:-----------:.     :-
++     :----:.           .:-----:
+diff --git a/src/images/keycloak_logo.txt b/src/images/keycloak_logo.txt
+new file mode 100644
+index 0000000..e0f0873
+--- /dev/null
++++ b/src/images/keycloak_logo.txt
+@@ -0,0 +1,22 @@
++           ------------------------
++         .-========================-
++        .===========================-
++       .=======----========---=======-
++      .=======:    .======.    -======-
++     .=======:      .====.      -======-::::
++    .=======:      .=====-       -==========
++   .=======:      .=======-       :=========
++  :=======.      .=========-       :========
++ :=======.      .============.      :=======
++:=======.      .==============.      :======
++:=======.      .==============.      :======
++ :=======.      .============.      :=======
++  :=======.      .=========-       :========
++   .=======:      .=======-       :=========
++    .=======:      .=====-       :==========
++     .=======:      .====.      -======-::::
++      .=======:    .=====-.    -======-
++       .=======----========---=======-
++        .===========================-
++         .-========================-
++           ------------------------
+diff --git a/src/images/kotlin_logo.txt b/src/images/kotlin_logo.txt
+new file mode 100644
+index 0000000..02e817b
+--- /dev/null
++++ b/src/images/kotlin_logo.txt
+@@ -0,0 +1,24 @@
++==========================================-.
++=========================================:
++=======================================:
++=====================================:
++===================================-.
++=================================-.
++===============================-.
++==============================:
++============================:
++==========================:
++========================-.
++======================-.
++======================-.
++========================-.
++==========================:
++============================:
++==============================:
++===============================-.
++=================================-.
++===================================-.
++=====================================:
++=======================================:
++=========================================:
++==========================================-.
+diff --git a/src/images/neovim_logo.txt b/src/images/neovim_logo.txt
+new file mode 100644
+index 0000000..9c08eab
+--- /dev/null
++++ b/src/images/neovim_logo.txt
+@@ -0,0 +1,24 @@
++        :-.               ::
++      .-===:              :==:
++    .-======-             :====.
++   :=========-            :=====-.
++.--.===========.          :=======-.
++- .-.-==========.         :=========
++-   ::-==========:        :=========
++-    :::==========-       :=========
++-     .-:==========-      :=========
++-      .-:===========.    :=========
++-        -.-==========.   :=========
++-        -  -==========:  :=========
++-        -   :==========- :=========
++-        -    .==========-.-========
++-        -     .===========.-=======
++-        -       -==========.:======
++-        -        -==========:.=====
++-        -         :==========-.-===
++-.       -          .==========-.-=-
++ :-.     -           .===========..
++   ::.   -             -========:
++     ::  -              :=====:
++      .::-               :==:
++        .-                ..
+diff --git a/src/images/postgresql_logo.txt b/src/images/postgresql_logo.txt
+new file mode 100644
+index 0000000..59fc5b4
+--- /dev/null
++++ b/src/images/postgresql_logo.txt
+@@ -0,0 +1,24 @@
++     .::----:::.  .::-----:----------:.
++   :=-:.......:-==-:.    ..:--:.    .:--:
++  --          .=:             :--.     .--.
++ --          .=:                :=.      :-
++ =.          --                  .=:     .=
++.=.         .=.                   .=.    :=
++.=.         :=:-----:         :----=-    --
++ =:         :=.  :-:=:       .=.:: -:   .=.
++ --         :=      :-       .=.   =.   --
++ .=.        :=      .=        --   =.  :=.
++  --        :-      :=         =:  -: .=.
++  .=.       :-      --         .=: -:.=:
++   --       .=.    :=           .=:=:=-
++   .=:       .=:. .=.            .===:
++    .=.      .=---==-:           .-==::::--
++     :=.    -=...-=. =:          =: ..::-=:
++      .=:.:=:-=-:. .-=-          =-----:.
++        .::. .------.-=         .=
++                     -=.        --
++                     -=.        =:
++                     :=.       .=.
++                     :=:       -=
++                      -=.    .-=.
++                       :------:
+diff --git a/src/images/spring_boot_logo.txt b/src/images/spring_boot_logo.txt
+new file mode 100644
+index 0000000..f44726a
+--- /dev/null
++++ b/src/images/spring_boot_logo.txt
+@@ -0,0 +1,22 @@
++          .:--------------------:.
++         -========================-
++        -==========================-
++       -=============-==============-
++     .-=============.  :=============-.
++    .========-:..===.  .==-..:=========.
++   .========:   .===.  .===.   :========.
++  .========.  .-====.  .====-.  :========.
++ .========:  .======.  .======.  -========.
++.=========   -======.  .======-  .=========.
++=========-   =======.  .======-   ==========
++==========   ========::=======-  .==========
++.=========.  .================.  :=========.
++ .=========.  .=============-.  .=========.
++  .=========.   :-========-:   :=========.
++   .=========-.   ..::::.    .-=========.
++    .==========-:..      ..:===========.
++     .-==============-===============-.
++       -============================-
++        -==========================-
++         -========================-
++          .:--------------------:.
+diff --git a/src/images/sqlite_logo.txt b/src/images/sqlite_logo.txt
+new file mode 100644
+index 0000000..2392459
+--- /dev/null
++++ b/src/images/sqlite_logo.txt
+@@ -0,0 +1,24 @@
++                                :-===:.
++ :-==========================.:========.
++:==========================-.==========:
++-=========================::=====--====-
++-========================::=====:-=====:
++-=======================::====-.=======
++-======================::====-.=======.
++-=====================-.====-.=======:
++-=====================.====- -======-
++-====================::====.-======-
++-====================.====.:======-
++-===================-.===:.=====-:
++-===================.=-== -==--:.
++-==================::-==.:=====.
++-==================.=-=- ====-
++-==================-:==::==-:
++-===================.==.=:
++-===================::-..
++-===================-.:
++-===================-.:
++.====================..
++  ..::::::::::::::::..:
++                      :
++                      :
+diff --git a/src/images/tmux_logo.txt b/src/images/tmux_logo.txt
+new file mode 100644
+index 0000000..b73ef05
+--- /dev/null
++++ b/src/images/tmux_logo.txt
+@@ -0,0 +1,24 @@
++ :-==================..==================-:
++-====================..====================-
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..:::::::::::::::::::::
++=====================..---------------------
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================..=====================
++=====================::=====================
++:                                          :
++ :........................................:
+diff --git a/src/images/yazi_logo.txt b/src/images/yazi_logo.txt
+new file mode 100644
+index 0000000..342967c
+--- /dev/null
++++ b/src/images/yazi_logo.txt
+@@ -0,0 +1,14 @@
++                              --
++
++.-:   :-   :--:   .------  .----
++.=-  .=-  :====-  .======  .====
++ -=. :=:  ==. -=.  ...:=-   ..-=
++ :=: -=.      :=:    .==.     -=
++ .=- =-   .--===:    -=.      -=
++  -=:=:  .==::-=:   -=:       -=
++  :=-=.  :=:  :=:  :=-        -=
++  .===   :=:  -=: .==....  ...-=...
++   -=:   .==-=-=: :======. :======:
++   -=.    .--:.-. .------. :------.
++   ==
++  .=-
+diff --git a/src/types.ts b/src/types.ts
+index f357e6c..98d3c4f 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -58,8 +58,9 @@ export interface Content {
+   stack: {
+     title: string;
+     groups: { folder: string; files: string[] }[];
+-    // Beschreibung je Eintrag (Ordner oder Datei). art = Mono-Grafik, credit = Quelle
+-    info: Record<string, { desc: string; art?: string[]; credit?: string }>;
++    // desc = Zeile im ls-Listing; did/likes = Absätze in der Detailansicht einer Datei.
++    // Das ASCII-Logo kommt aus src/images/<name>_logo.txt
++    info: Record<string, { desc: string; did?: string; likes?: string }>;
+   };
+   readme: {
+     title: string;
