@@ -1,7 +1,28 @@
+import { useEffect, useState } from 'react';
 import { Pane } from './Pane';
 import { SelectList } from './SelectList';
 import { content } from '../content';
 import type { Project } from '../types';
+
+function useThemeMediaSrc(project: Project): string {
+  const [src, setSrc] = useState(() => mediaSrc(project));
+
+  useEffect(() => {
+    const update = () => setSrc(mediaSrc(project));
+    update();
+    const observer = new MutationObserver(update);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, [project]);
+
+  return src;
+}
+
+function mediaSrc(project: Project): string {
+  if (!project.media) return '';
+  const light = document.documentElement.dataset.theme === 'light';
+  return light && project.media.srcLight ? project.media.srcLight : project.media.src;
+}
 
 const { projects } = content;
 
@@ -42,7 +63,8 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 
 function Visual({ project }: { project: Project }) {
   if (!project.media) return null;
-  const { src, label, poster } = project.media;
+  const src = useThemeMediaSrc(project);
+  const { label, poster } = project.media;
   const alt = `${label} von ${project.title}`;
   return (
     <a className="media" href={src} target="_blank" rel="noopener noreferrer">
@@ -59,27 +81,36 @@ function Visual({ project }: { project: Project }) {
 export function ProjectMain({ project }: { project: Project }) {
   return (
     <article className="project-main">
-      <div className="project-text">
+      <div className="project-header">
         <h3 className="detail-title">{project.title}</h3>
         {project.status && <span className="status-pill">{project.status}</span>}
-        <p className="detail-desc">{project.desc}</p>
-        <dl className="detail-meta">
-          {Object.entries(project.meta).map(([key, value]) => (
-            <div className="kv-row" key={key}>
-              <dt>{key}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
-        {project.repoUrl && (
-          <div className="actions">
-            <a className="btn btn-solid" href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-              {projects.repoLabel}
-            </a>
-          </div>
-        )}
       </div>
-      <Visual project={project} />
+      <div className="project-split">
+        <div className="project-media-col">
+          <Visual project={project} />
+        </div>
+        <div className="project-desc-col">
+          <div className="desc-command">{'>'} cat description.md</div>
+          <p className="detail-desc">{project.desc}</p>
+        </div>
+        <div className="project-info-col">
+          <dl className="detail-meta">
+            {Object.entries(project.meta).map(([key, value]) => (
+              <div className="kv-row" key={key}>
+                <dt>{key}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+          {project.repoUrl && (
+            <div className="actions">
+              <a className="btn btn-solid" href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+                {projects.repoLabel}
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
     </article>
   );
 }

@@ -10,6 +10,8 @@ const views = [
   ['mysh', 'projekte', 1],
   ['vlanscape', 'projekte', 2],
   ['kairo', 'projekte', 3],
+  ['activitytracker', 'projekte', 4],
+  ['yawntest', 'projekte', 5],
   ['stack', 'stack', 0],
   ['readme', 'readme', 0],
 ];

@@ -22,6 +22,8 @@ export interface Project {
     label: string;
     // Standbild für Videos, wird bei "weniger Bewegung" statt des Videos gezeigt
     poster?: string;
+    // Optionales Light-Mode-Pendant; wird angezeigt, wenn das Portfolio im Light Mode läuft
+    srcLight?: string;
   };
 }
 

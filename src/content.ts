@@ -1,6 +1,7 @@
 // Alle Texte der Seite. Nur diese Datei anfassen, um Inhalte zu ändern.
 // Leere Strings ('') werden nicht angezeigt. Bilder liegen in public/media.
 import type { Content, StackRow } from './types';
+import goASCII from "./images/go_logo.txt?raw";
 
 export const content: Content = {
   // Kasten oben links in der tmux-Leiste
@@ -48,15 +49,15 @@ export const content: Content = {
         status: '',
         desc: 'Rechnungen für Freelancer und kleine Firmen. Das Go-Backend rechnet mit ganzzahligen Cents, vergibt Rechnungsnummern lückenlos pro Nutzer und Jahr, trennt Mandanten strikt und erzeugt PDFs nach DIN 5008. Login über widerrufbare Sessions mit Argon2id.',
         meta: {
-          sprache: 'Go',
-          framework: 'Gin',
+          frontend: 'React',
+          backend: 'Go · Gin',
           datenbank: 'PostgreSQL',
           pdf: 'Maroto v2',
           infra: 'Docker, GitHub Actions',
           team: '2 Personen',
         },
         repoUrl: 'https://github.com/Mirac61/VentoryGo',
-        media: { src: '/media/ventorygo.webp', label: 'mockup' },
+        media: { src: '/media/ventorygo.webp', label: 'screenshot' },
       },
       {
         id: 'mysh',
@@ -97,7 +98,39 @@ export const content: Content = {
           datenbank: 'SQLite',
         },
         repoUrl: 'https://github.com/Mirac61/Kairo',
-        media: { src: '/media/kairo.webp', label: 'screenshot' },
+        media: { src: '/media/kairo-dark.webp', srcLight: '/media/kairo-light.webp', label: 'screenshot' },
+      },
+      {
+        id: 'activitytracker',
+        title: 'Activity Tracker',
+        type: 'android + spring-boot',
+        status: '',
+        desc: 'Offline-first Activity Tracker aus einem sechsköpfigen Uni-Teamprojekt. Der Android-Client in Kotlin speichert Einträge lokal und synchronisiert sie per WorkManager mit einer Spring-Boot-API. Authentifizierung läuft über Keycloak, Releases werden per GitHub Actions signiert. Mein Fokus lag auf dem Offline-Sync, der Statistik-Ansicht und dem Release-Workflow.',
+        meta: {
+          backend: 'Spring Boot · Keycloak',
+          client: 'Kotlin · Android',
+          datenbank: 'PostgreSQL · SQLite',
+          sync: 'WorkManager',
+          infra: 'Docker · GitHub Actions',
+          team: '6 Personen',
+        },
+        repoUrl: 'https://github.com/Mirac61/activitytracker',
+        media: { src: '/media/activitytracker-dark.webp', srcLight: '/media/activitytracker-light.webp', label: 'mockup' },
+      },
+      {
+        id: 'yawntest',
+        title: 'yawntest',
+        type: 'go-test-generator',
+        status: '',
+        desc: 'Kommandozeilen-Tool in Go, das aus bestehendem Quellcode automatisch Tests generiert. Es erkennt HTTP-Handler, JSON-Structs, reine Funktionen und Validatoren und prüft, was unabhängig von der Geschäftslogik sicher gelten muss: keine Panics, 5xx nur bei echten Serverfehlern, JSON überlebt einen Round-Trip, gleiche Eingaben liefern gleiche Ausgaben. Offline, deterministisch und ausschließlich mit der Go-Standardbibliothek.',
+        meta: {
+          sprache: 'Go',
+          testing: 'generierte Unit-Tests',
+          checks: 'panic · 5xx · JSON round-trip · idempotenz · split-sum',
+          infra: 'GitHub Actions',
+        },
+        repoUrl: 'https://github.com/Mirac61/yawntest',
+        media: { src: '/media/yawntest.webp', label: 'screenshot' },
       },
     ],
   },
@@ -111,7 +144,7 @@ export const content: Content = {
     title: 'stack',
     groups: [
       { folder: 'sprachen', files: ['go', 'java', 'kotlin', 'c++'] },
-      { folder: 'backend', files: ['gin', 'spring boot', 'postgresql', 'keycloak'] },
+      { folder: 'backend', files: ['gin', 'spring boot', 'postgresql', 'sqlite', 'keycloak'] },
       { folder: 'infra', files: ['docker', 'ci/cd'] },
       { folder: 'tools', files: ['neovim', 'tmux', 'ghostty', 'yazi'] },
     ],
@@ -121,7 +154,10 @@ export const content: Content = {
       infra: { desc: 'Bauen, testen und ausliefern.' },
       tools: { desc: 'Mein Terminal-Alltag.' },
 
-      go: { desc: 'Meine Hauptsprache im Backend. Ganzzahlige Cents, klare Nebenläufigkeit, schnelle Builds.' },
+      go: {
+        desc: 'Meine Hauptsprache im Backend. Ganzzahlige Cents, klare Nebenläufigkeit, schnelle Builds.',
+        art: goASCII.trim().split(/\r?\n/),
+      },
       java: {
         desc: 'Aus dem Studium und für Spring-Boot-Dienste.',
         art: [
@@ -156,6 +192,7 @@ export const content: Content = {
         ],
       },
       postgresql: { desc: 'Relationale Datenbank mit Transaktionen und sauberem SQL.' },
+      sqlite: { desc: 'Dateibasierte Datenbank für lokale Tools und kleine Dienste.' },
       keycloak: {
         desc: 'Identity-Provider für Login, Rollen und SSO.',
         art: [
