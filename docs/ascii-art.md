@@ -15,9 +15,9 @@ Jedes Logo liegt als Textdatei in `src/images/<name>_logo.txt`. Sonderzeichen im
 ## Neu erzeugen
 
 ```bash
-node scripts/ascii-logos.mjs
+pnpm logos
 # falls Playwrights eigener Browser fehlt:
-CHROMIUM_PATH=/pfad/zu/chrome node scripts/ascii-logos.mjs
+CHROMIUM_PATH=/pfad/zu/chrome pnpm logos
 ```
 
 Das Skript überschreibt alle Logos außer `go_logo.txt`. Breite (`cols`) und Zeichenrampe (` .:-=`, wie beim Go-Logo) stehen oben im Skript. Eine Datei lässt sich danach auch von Hand nachbessern. Dann den Eintrag aus `logos` im Skript nehmen, damit sie beim nächsten Lauf nicht überschrieben wird.

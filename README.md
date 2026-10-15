@@ -1,66 +1,54 @@
 # mirac@esslingen ~ portfolio
 
-Meine Portfolio-Seite im Stil eines Terminals mit tmux, lazygit und neofetch als Vorbild. Die Seite zeigt Profil, Projekte, Stack und ein kurzes Readme.
+Meine Portfolio-Seite, aufgebaut wie eine Terminal-Sitzung mit tmux. Profil, Projekte, Stack und Readme sind eigene Fenster und lassen sich komplett per Tastatur bedienen.
 
-<!-- Screenshot: Bild als docs/screenshot.png ablegen und in der nächsten Zeile die Kommentarzeichen entfernen -->
-<!-- <p align="center"><img src="docs/screenshot.png" alt="Screenshot der Portfolio-Seite" width="900"></p> -->
+<p align="center">
+  <img src="docs/screenshot.png" alt="Screenshot der Portfolio-Seite" width="900">
+</p>
 
-**Gebaut mit** React 19, TypeScript und Vite. Keine UI-Bibliothek, das gesamte Styling steckt in `src/App.css`.
+React 19, TypeScript und Vite. Es gibt keine UI-Bibliothek, das Styling steckt vollständig in `src/App.css`.
 
 ## Lokal starten
 
+Vorausgesetzt werden Node.js 22 und pnpm.
+
 ```bash
-npm install
-npm run dev       # http://localhost:5173
-npm run build     # Typecheck und Build nach dist/
-npm run lint
+pnpm install
+pnpm dev          # http://localhost:5173
+pnpm build        # Typecheck und Build nach dist/
+pnpm lint
 ```
 
-## Inhalte ändern
-
-Alle Texte stehen in **`src/content.ts`**. Für Inhaltsänderungen muss keine andere Datei angefasst werden.
-
-| Was | Wo in `content.ts` |
+| Skript | Zweck |
 |---|---|
-| Überschrift, Fakten, Status „werkstudent: offen“ | `profile` |
-| Mail, GitHub, LinkedIn | `profile.links` |
+| `pnpm og` | erzeugt das Vorschaubild `public/og.png`, der Dev-Server muss laufen |
+| `pnpm shots <ordner>` | Screenshots aller Fenster in Hell und Dunkel, Desktop und Mobil |
+| `pnpm logos` | erzeugt die ASCII-Logos im Stack neu, siehe [docs/ascii-art.md](docs/ascii-art.md) |
+
+## Inhalte
+
+Sämtliche Texte stehen in `src/content.ts`. Für inhaltliche Änderungen muss keine andere Datei angefasst werden.
+
+| Bereich | Schlüssel |
+|---|---|
+| Überschrift, Fakten, Links | `profile` |
 | Projekte | `projects.items` |
-| Technologien (Verzeichnis-Listing, Texte) | `stack` |
-| Texte im Readme-Fenster | `readme.sections` |
-| Statuszeile unten | `footer` |
+| Stack-Einträge und ihre Texte | `stack` |
+| Readme-Fenster | `readme.sections` |
+| Statuszeile | `footer` |
 
-Die ASCII-Logos im Stack liegen in `src/images/*_logo.txt`, siehe `docs/ascii-art.md`.
+Ein leerer String blendet das jeweilige Feld aus. Projektbilder liegen in `public/media/`, am besten als `.webp` im Format 16:10.
 
-Ein leerer String (`''`) blendet das Feld aus. Das gilt für Links, den Projektstatus und die Repo-URL. Der erste sichtbare Link erscheint auf der Startseite als lila Button.
-
-### Projekt hinzufügen
-
-1. Einen Eintrag in `projects.items` anlegen. Die `id` ist kurz und kleingeschrieben, sie erscheint in der Liste und in der Adresszeile.
-2. Ein Bild oder Video nach `public/media/` legen und unter `media.src` eintragen, z.B. `/media/meinprojekt.webp`. Ohne `media` bleibt die Bildfläche weg.
-
-Bilder am besten als `.webp` im Format 16:10 ablegen. Sie werden auf dieses Format zugeschnitten, oben links bleibt immer sichtbar.
-
-### Readme-Abschnitt hinzufügen
-
-Einen Eintrag in `readme.sections` anlegen, entweder mit `paragraphs` für Fließtext oder mit `list` für Stichpunkte. Der Abschnitt erscheint automatisch auch in der Seitenleiste.
-
-## Vorschaubild und Screenshots
-
-Titel und Beschreibung für Google und Link-Vorschauen stehen in `index.html`. Das Vorschaubild `public/og.png` wird bei laufendem Dev-Server so neu erzeugt:
-
-```bash
-node scripts/og-shot.mjs
-```
-
-Für einen Abgleich nach Designänderungen erzeugt `node scripts/shots.mjs shots/neu` alle Fenster in Hell und Dunkel, jeweils für Desktop und Handy.
-
-## Tastenkürzel
+## Bedienung
 
 | Taste | Aktion |
 |---|---|
 | `1` bis `4` | Fenster wechseln |
-| `j` / `k` oder `↓` / `↑` | durch alle Boxen navigieren, am Ende einer Box geht es in der nächsten weiter |
-| `t` | helles oder dunkles Design |
+| `j` / `k`, `↓` / `↑` | navigieren |
+| `l` / `→` / `Enter` | im Stack einen Ordner oder Eintrag öffnen |
+| `h` / `←` / `Esc` | eine Ebene zurück |
+
+Das Farbschema folgt der Systemeinstellung.
 
 ## Aufbau
 
@@ -70,7 +58,8 @@ src/
 ├── types.ts        Form der Inhalte
 ├── App.tsx         Fenster, Tastenkürzel, Layout
 ├── App.css         Farben, Abstände, Responsive
-└── components/     ein Fenster pro Datei, dazu Banner und Liste
+├── components/     ein Fenster pro Datei
+└── images/         ASCII-Logos für den Stack
 ```
 
-Farben und Typografie folgen `DESIGN.md`.
+Farben und Typografie sind in [DESIGN.md](DESIGN.md) festgehalten.
